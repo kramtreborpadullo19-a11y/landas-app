@@ -49,6 +49,10 @@
 
   /* ---------- top bar ---------- */
   .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:26px;flex-wrap:wrap;gap:10px;}
+  .topbar-left{display:flex;align-items:center;gap:12px;}
+  .hamburger-btn{width:38px;height:38px;border-radius:11px;background:var(--card);border:1px solid var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer;flex:none;}
+  .hamburger-btn:hover{border-color:var(--line-strong);}
+  .hamburger-btn span{display:block;width:16px;height:2px;background:var(--ink-soft);border-radius:2px;}
   .brand{display:flex;align-items:center;gap:10px;}
   .brand-mark{width:38px;height:38px;border-radius:11px;background:linear-gradient(155deg,var(--readwrite),var(--visual));position:relative;flex:none;}
   .brand-mark svg{position:absolute;inset:0;margin:auto;}
@@ -56,6 +60,29 @@
   .brand-sub{font-family:var(--font-mono);font-size:10.5px;color:var(--ink-faint);letter-spacing:.04em;margin-top:1px;}
   .home-link{font-family:var(--font-mono);font-size:12px;color:var(--ink-soft);background:var(--card);border:1px solid var(--line);padding:8px 14px;border-radius:999px;cursor:pointer;}
   .home-link:hover{border-color:var(--line-strong);}
+
+  /* ---------- navigation drawer ---------- */
+  .drawer-backdrop{position:fixed;inset:0;background:rgba(24,38,32,0.38);z-index:40;opacity:0;pointer-events:none;transition:opacity .22s ease;}
+  .drawer-backdrop.open{opacity:1;pointer-events:auto;}
+  .drawer-panel{position:fixed;top:0;left:0;bottom:0;width:300px;max-width:86vw;background:var(--card);z-index:41;
+    box-shadow:2px 0 24px rgba(24,38,32,0.18);transform:translateX(-104%);transition:transform .25s cubic-bezier(.2,.8,.3,1);
+    display:flex;flex-direction:column;padding-top:env(safe-area-inset-top);}
+  .drawer-panel.open{transform:translateX(0);}
+  .drawer-head{display:flex;align-items:center;justify-content:space-between;padding:20px 18px 14px;border-bottom:1px solid var(--line);}
+  .drawer-close{width:32px;height:32px;border-radius:9px;border:1px solid var(--line);background:var(--paper-alt);cursor:pointer;font-size:16px;color:var(--ink-soft);display:flex;align-items:center;justify-content:center;}
+  .drawer-body{padding:16px 18px 22px;overflow-y:auto;flex:1;}
+  .drawer-section-title{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-faint);margin:16px 0 8px;}
+  .drawer-section-title:first-child{margin-top:0;}
+  .drawer-item{display:flex;align-items:flex-start;gap:12px;padding:11px 10px;border-radius:var(--radius-sm);cursor:pointer;}
+  .drawer-item:hover{background:var(--paper-alt);}
+  .drawer-item .di-icon{font-size:19px;flex:none;margin-top:1px;}
+  .drawer-item .di-text b{display:block;font-size:13.5px;color:var(--ink);font-weight:600;}
+  .drawer-item .di-text span{display:block;font-size:12px;color:var(--ink-soft);margin-top:2px;line-height:1.4;}
+  .drawer-howto{background:var(--visual-soft);border-radius:var(--radius-md);padding:14px 15px;margin-top:4px;}
+  .drawer-howto h4{font-family:var(--font-display);font-size:14px;color:var(--visual-deep);margin:0 0 6px;}
+  .drawer-howto ol{margin:0;padding-left:18px;}
+  .drawer-howto li{font-size:12.5px;color:var(--ink);line-height:1.6;}
+  .drawer-foot{padding:14px 18px;border-top:1px solid var(--line);font-family:var(--font-mono);font-size:10.5px;color:var(--ink-faint);}
 
   /* ---------- trail ---------- */
   .trail{display:flex;align-items:flex-start;justify-content:space-between;position:relative;margin:6px 0 30px;padding:0 6px;}
@@ -111,7 +138,8 @@
   .field input, .field select{width:100%;padding:11px 13px;border-radius:var(--radius-sm);border:1.5px solid var(--line-strong);font-family:var(--font-body);font-size:15px;background:var(--paper-alt);color:var(--ink);}
   .field input:focus, .field select:focus{outline:2px solid var(--visual);outline-offset:1px;}
   .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 16px;}
-  @media (max-width:520px){.form-grid{grid-template-columns:1fr;}}
+  .form-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0 16px;}
+  @media (max-width:520px){.form-grid{grid-template-columns:1fr;} .form-grid-3{grid-template-columns:1fr;}}
   .error-text{color:var(--auditory-deep);font-size:12.5px;margin-top:-10px;margin-bottom:14px;display:none;}
   .error-text.show{display:block;}
 
@@ -352,7 +380,8 @@ var state = {
   signupSuccess: false,
   loginError: false,
   selectedStudent: null,
-  resetSent: false
+  resetSent: false,
+  drawerOpen: false
 };
 
 function gradeRoster(){
@@ -459,8 +488,80 @@ function el(tag, attrs, children){
 }
 function txt(t){ return document.createTextNode(t); }
 
+function toggleDrawer(force){
+  state.drawerOpen = (typeof force === "boolean") ? force : !state.drawerOpen;
+  render();
+}
+
+/* Navigation drawer: a slide-out panel (hamburger icon in the top bar)
+   that explains what Landas / the quiz is for and how to use the app,
+   plus quick links back to the student and teacher entry points. */
+function navDrawer(){
+  var backdrop = el("div",{class:"drawer-backdrop"+(state.drawerOpen?" open":""),onclick:function(){ toggleDrawer(false); }});
+  var panel = el("div",{class:"drawer-panel"+(state.drawerOpen?" open":"")});
+
+  panel.appendChild(el("div",{class:"drawer-head"},[
+    el("div",{class:"brand"},[
+      el("div",{class:"brand-mark"},[
+        (function(){var s=document.createElementNS("http://www.w3.org/2000/svg","svg");
+          s.setAttribute("width","20");s.setAttribute("height","20");s.setAttribute("viewBox","0 0 20 20");
+          s.innerHTML='<path d="M2 16 C 6 8, 8 14, 10 6 C 12 14, 14 8, 18 3" stroke="white" stroke-width="2" fill="none" stroke-linecap="round"/>';
+          return s;})()
+      ]),
+      el("div",{},[
+        el("div",{class:"brand-name"},[txt("Landas")]),
+        el("div",{class:"brand-sub"},[txt("VARK LEARNING TRAIL")])
+      ])
+    ]),
+    el("div",{class:"drawer-close",onclick:function(){ toggleDrawer(false); }},[txt("\u2715")])
+  ]));
+
+  var body = el("div",{class:"drawer-body"});
+
+  body.appendChild(el("div",{class:"drawer-howto"},[
+    el("h4",{},[txt("What is this quiz for?")]),
+    el("p",{style:"font-size:12.5px;color:var(--ink);margin:0 0 8px;"},[txt("The Landas quiz (based on the VARK model) is a short, "+QUESTIONS.length+"-question picture quiz that helps figure out whether a student learns best by seeing, hearing, reading/writing, or doing. It's not a test \u2014 there are no wrong answers.")]),
+    el("h4",{style:"margin-top:12px;"},[txt("How to use Landas")]),
+    el("ol",{},[
+      el("li",{},[txt("Students log in (or create an account), then answer the picture quiz honestly \u2014 just go with the first choice that feels right.")]),
+      el("li",{},[txt("The result is saved automatically and shows the student's learning style with simple tips for studying.")]),
+      el("li",{},[txt("Teachers log in to see their class's overall learning-style mix, plus tips for teaching that mix.")]),
+      el("li",{},[txt("Teachers can also open any individual student's profile for one-on-one recommendations.")])
+    ])
+  ]));
+
+  body.appendChild(el("div",{class:"drawer-section-title"},[txt("Go to")]));
+  body.appendChild(el("div",{class:"drawer-item",onclick:function(){ toggleDrawer(false); state.authErrorMsg=""; state.screen="start"; render(); }},[
+    el("div",{class:"di-icon"},[txt("\uD83C\uDFE0")]),
+    el("div",{class:"di-text"},[el("b",{},[txt("Home")]), el("span",{},[txt("Back to the start screen")])])
+  ]));
+  body.appendChild(el("div",{class:"drawer-item",onclick:function(){ toggleDrawer(false); state.authErrorMsg=""; state.screen = state.studentLoggedIn ? "studentHome" : "studentLogin"; render(); }},[
+    el("div",{class:"di-icon"},[txt("\uD83E\uDDED")]),
+    el("div",{class:"di-text"},[el("b",{},[txt("Student trail")]), el("span",{},[txt("Take or review the learning-style quiz")])])
+  ]));
+  body.appendChild(el("div",{class:"drawer-item",onclick:function(){ toggleDrawer(false); state.authErrorMsg=""; state.screen = state.teacherLoggedIn ? "teacherHome" : "login"; render(); }},[
+    el("div",{class:"di-icon"},[txt("\uD83E\uDDD1\u200D\uD83C\uDFEB")]),
+    el("div",{class:"di-text"},[el("b",{},[txt("Teacher dashboard")]), el("span",{},[txt("Class overview and student profiles")])])
+  ]));
+
+  body.appendChild(el("div",{class:"drawer-section-title"},[txt("About")]));
+  body.appendChild(el("div",{class:"drawer-item"},[
+    el("div",{class:"di-icon"},[txt("\u2139\uFE0F")]),
+    el("div",{class:"di-text"},[el("b",{},[txt("VARK model")]), el("span",{},[txt("Visual, Auditory, Read/Write, Kinesthetic \u2014 four common ways people take in new information.")])])
+  ]));
+
+  panel.appendChild(body);
+  panel.appendChild(el("div",{class:"drawer-foot"},[txt("Salcedo, Eastern Samar \u00B7 Landas")]));
+
+  return [backdrop, panel];
+}
+
 function topbar(homeAction){
   var bar = el("div",{class:"topbar"});
+  var left = el("div",{class:"topbar-left"});
+  left.appendChild(el("div",{class:"hamburger-btn",onclick:function(){ toggleDrawer(true); }},[
+    el("span",{}), el("span",{}), el("span",{})
+  ]));
   var brand = el("div",{class:"brand"},[
     el("div",{class:"brand-mark"},[
       (function(){var s=document.createElementNS("http://www.w3.org/2000/svg","svg");
@@ -473,7 +574,8 @@ function topbar(homeAction){
       el("div",{class:"brand-sub"},[txt("VARK LEARNING TRAIL")])
     ])
   ]);
-  bar.appendChild(brand);
+  left.appendChild(brand);
+  bar.appendChild(left);
   var loggedIn = state.teacherLoggedIn || state.studentLoggedIn;
   bar.appendChild(el("div",{class:"home-link",onclick:homeAction},[txt(loggedIn ? "\uD83D\uDD13 Log out" : "Start over")]));
   return bar;
@@ -518,21 +620,22 @@ function trail(activeIndex, doneUpTo, subProgress){
 function render(){
   var root = document.getElementById("app");
   root.innerHTML = "";
-  if(state.screen === "start") return renderStartScreen(root);
-  if(state.screen === "quiz") return renderQuizScreen(root);
-  if(state.screen === "loading") return renderLoadingScreen(root);
-  if(state.screen === "result") return renderResultScreen(root);
-  if(state.screen === "login") return renderLoginScreen(root);
-  if(state.screen === "signup") return renderSignupScreen(root);
-  if(state.screen === "studentLogin") return renderStudentLoginScreen(root);
-  if(state.screen === "studentSignup") return renderStudentSignupScreen(root);
-  if(state.screen === "studentHome") return renderStudentHomeScreen(root);
-  if(state.screen === "forgotPassword") return renderForgotPasswordScreen(root);
-  if(state.screen === "authLoading") return renderAuthLoadingScreen(root);
-  if(state.screen === "teacherHome") return renderTeacherHome(root);
-  if(state.screen === "classDash") return renderClassDash(root);
-  if(state.screen === "studentPicker") return renderStudentPicker(root);
-  if(state.screen === "studentProfile") return renderStudentProfile(root);
+  if(state.screen === "start") renderStartScreen(root);
+  else if(state.screen === "quiz") renderQuizScreen(root);
+  else if(state.screen === "loading") renderLoadingScreen(root);
+  else if(state.screen === "result") renderResultScreen(root);
+  else if(state.screen === "login") renderLoginScreen(root);
+  else if(state.screen === "signup") renderSignupScreen(root);
+  else if(state.screen === "studentLogin") renderStudentLoginScreen(root);
+  else if(state.screen === "studentSignup") renderStudentSignupScreen(root);
+  else if(state.screen === "studentHome") renderStudentHomeScreen(root);
+  else if(state.screen === "forgotPassword") renderForgotPasswordScreen(root);
+  else if(state.screen === "authLoading") renderAuthLoadingScreen(root);
+  else if(state.screen === "teacherHome") renderTeacherHome(root);
+  else if(state.screen === "classDash") renderClassDash(root);
+  else if(state.screen === "studentPicker") renderStudentPicker(root);
+  else if(state.screen === "studentProfile") renderStudentProfile(root);
+  navDrawer().forEach(function(node){ root.appendChild(node); });
 }
 
 function goHome(){
@@ -640,7 +743,13 @@ function renderStudentSignupScreen(root){
   card.appendChild(el("p",{style:"text-align:center;font-size:13px;"},[txt("Sign up once, then log in anytime to take the quiz or see your result.")]));
 
   var wrap = el("div",{style:"margin-top:18px;"});
-  wrap.appendChild(el("div",{class:"field"},[el("label",{},[txt("First name")]), el("input",{type:"text",id:"ssu-name",placeholder:"e.g. Miguel"})]));
+
+  var nameGrid = el("div",{class:"form-grid-3"});
+  nameGrid.appendChild(el("div",{class:"field"},[el("label",{},[txt("First name")]), el("input",{type:"text",id:"ssu-first",placeholder:"e.g. Miguel"})]));
+  nameGrid.appendChild(el("div",{class:"field"},[el("label",{},[txt("Middle name")]), el("input",{type:"text",id:"ssu-middle",placeholder:"e.g. Santos"})]));
+  nameGrid.appendChild(el("div",{class:"field"},[el("label",{},[txt("Last name")]), el("input",{type:"text",id:"ssu-last",placeholder:"e.g. Reyes"})]));
+  wrap.appendChild(nameGrid);
+
   wrap.appendChild(el("div",{class:"field"},[el("label",{},[txt("Email")]), el("input",{type:"email",id:"ssu-email",placeholder:"e.g. miguel@example.com"})]));
   wrap.appendChild(el("div",{class:"field"},[el("label",{},[txt("Password")]), el("input",{type:"password",id:"ssu-pass",placeholder:"At least 6 characters"})]));
 
@@ -675,21 +784,24 @@ function renderStudentSignupScreen(root){
   var row = el("div",{class:"btn-row"});
   row.appendChild(el("button",{class:"btn btn-ghost",onclick:function(){ state.authErrorMsg=""; state.signupSuccess=false; state.screen="studentLogin"; render(); }},[txt("\u2190 Back to login")]));
   row.appendChild(el("button",{class:"btn btn-primary",onclick:function(){
-    var name=document.getElementById("ssu-name").value.trim();
+    var first=document.getElementById("ssu-first").value.trim();
+    var middle=document.getElementById("ssu-middle").value.trim();
+    var last=document.getElementById("ssu-last").value.trim();
     var email=document.getElementById("ssu-email").value.trim();
     var pass=document.getElementById("ssu-pass").value;
     var school=document.getElementById("ssu-school").value;
     var age=document.getElementById("ssu-age").value.trim();
     var grade=document.getElementById("ssu-grade").value;
     var section=document.getElementById("ssu-section").value.trim();
-    if(!name||!email||!pass||!school||!age||!grade||!section){
+    if(!first||!middle||!last||!email||!pass||!school||!age||!grade||!section){
       state.authErrorMsg="Please fill in every field."; render(); return;
     }
+    var name = first+" "+middle+" "+last;
     state.loadingMessage="Creating your account\u2026";
     state.screen="authLoading"; render();
     api("/auth/signup/student", {
       method:"POST",
-      body: JSON.stringify({ name:name, email:email, password:pass, school:school, age:age, grade:grade, section:section })
+      body: JSON.stringify({ name:name, firstName:first, middleName:middle, lastName:last, email:email, password:pass, school:school, age:age, grade:grade, section:section })
     }).then(function(res){
       if(res.error){
         state.screen="studentSignup"; state.authErrorMsg=res.error; render(); return;
