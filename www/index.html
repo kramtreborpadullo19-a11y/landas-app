@@ -260,13 +260,14 @@
 
 <script>
 /* ================= BACKEND API SETUP =================
-   Point this at your running Express backend (see /backend in this
-   project). During local development that's usually:
-     http://localhost:4000/api
-   For a real device or a hosted deployment, replace it with the
-   backend's real address, e.g. https://landas-api.yourdomain.com/api
+   This frontend is served by the same Express server that exposes
+   the API (see server.js — express.static + app.use('/api/...')),
+   so a relative path always resolves to the current origin:
+     - locally:     http://localhost:4000/api
+     - in production: https://landas-app.onrender.com/api
+   No need to hardcode a host here.
 ==================================================== */
-var API_BASE = "http://localhost:4000/api";
+var API_BASE = "/api";
 
 /* Thin fetch wrapper: attaches the JWT (when present), parses JSON,
    and turns a non-2xx response into a rejected promise carrying the
@@ -1015,13 +1016,7 @@ function renderSignupScreen(root){
   card.appendChild(el("p",{style:"text-align:center;font-size:13px;"},[txt("Sign up once, then log in anytime to see your class.")]));
 
   var wrap = el("div",{style:"margin-top:18px;"});
-
-  var nameGrid = el("div",{class:"form-grid-3"});
-  nameGrid.appendChild(el("div",{class:"field"},[el("label",{},[txt("First name")]), el("input",{type:"text",id:"su-first",placeholder:"e.g. Juana"})]));
-  nameGrid.appendChild(el("div",{class:"field"},[el("label",{},[txt("Middle name")]), el("input",{type:"text",id:"su-middle",placeholder:"e.g. Santos"})]));
-  nameGrid.appendChild(el("div",{class:"field"},[el("label",{},[txt("Last name")]), el("input",{type:"text",id:"su-last",placeholder:"e.g. Dela Cruz"})]));
-  wrap.appendChild(nameGrid);
-
+  wrap.appendChild(el("div",{class:"field"},[el("label",{},[txt("Full name")]), el("input",{type:"text",id:"su-name",placeholder:"e.g. Juana Dela Cruz"})]));
   wrap.appendChild(el("div",{class:"field"},[el("label",{},[txt("Email")]), el("input",{type:"email",id:"su-email",placeholder:"e.g. j.delacruz@deped.gov.ph"})]));
   wrap.appendChild(el("div",{class:"field"},[el("label",{},[txt("Password")]), el("input",{type:"password",id:"su-pass",placeholder:"At least 6 characters"})]));
   var schoolSel = el("select",{id:"su-school"},[el("option",{value:""},[txt("Select your school")])]);
@@ -1042,22 +1037,19 @@ function renderSignupScreen(root){
   var row = el("div",{class:"btn-row"});
   row.appendChild(el("button",{class:"btn btn-ghost",onclick:function(){ state.authErrorMsg=""; state.signupSuccess=false; state.screen="login"; render(); }},[txt("\u2190 Back to login")]));
   row.appendChild(el("button",{class:"btn btn-primary",onclick:function(){
-    var first=document.getElementById("su-first").value.trim();
-    var middle=document.getElementById("su-middle").value.trim();
-    var last=document.getElementById("su-last").value.trim();
+    var name=document.getElementById("su-name").value.trim();
     var email=document.getElementById("su-email").value.trim();
     var pass=document.getElementById("su-pass").value;
     var school=document.getElementById("su-school").value;
     var grade=document.getElementById("su-grade").value;
-    if(!first||!middle||!last||!email||!pass||!school||!grade){
+    if(!name||!email||!pass||!school||!grade){
       state.authErrorMsg="Please fill in every field."; render(); return;
     }
-    var name = first+" "+middle+" "+last;
     state.loadingMessage="Creating your account\u2026";
     state.screen="authLoading"; render();
     api("/auth/signup/teacher", {
       method:"POST",
-      body: JSON.stringify({ name:name, firstName:first, middleName:middle, lastName:last, email:email, password:pass, school:school, grade:grade })
+      body: JSON.stringify({ name:name, email:email, password:pass, school:school, grade:grade })
     }).then(function(res){
       if(res.error){
         state.screen="signup"; state.authErrorMsg=res.error; render(); return;
