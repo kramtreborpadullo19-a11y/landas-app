@@ -21,4 +21,4 @@ app.use('/api/auth', authRoutes);
 app.use('/api/students', studentRoutes);
 
 const PORT = process.env.PORT || 4000;
-app.listen(PORT, () => console.log(Landas backend listening on port ${PORT}));
+app.listen(PORT, () => console.log('Landas backend listening on port ${PORT}'));
