@@ -1,0 +1,1124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#F5F8F3">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="mobile-web-app-capable" content="yes">
+<title>Landas — Design and Development of an Intelligent System for Predictive Modeling of Students' Learning Styles Using Data Analytics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --paper:#F5F8F3;
+    --paper-alt:#EAF2EA;
+    --card:#FFFFFF;
+    --ink:#182620;
+    --ink-soft:#57685F;
+    --ink-faint:#8A988F;
+    --line:rgba(24,38,32,0.12);
+    --line-strong:rgba(24,38,32,0.22);
+
+    --visual:#5B4FE9;    --visual-soft:#EDEBFC;   --visual-deep:#372E9E;
+    --auditory:#F0603C;  --auditory-soft:#FDEAE3; --auditory-deep:#A43C22;
+    --readwrite:#0FA07F; --readwrite-soft:#E1F5EE;--readwrite-deep:#0A6B56;
+    --kinesthetic:#E6A417;--kinesthetic-soft:#FCF0DA;--kinesthetic-deep:#8F660D;
+
+    --radius-lg:22px;
+    --radius-md:14px;
+    --radius-sm:9px;
+    --font-display:'Baloo 2', system-ui, sans-serif;
+    --font-body:'Space Grotesk', system-ui, sans-serif;
+    --font-mono:'IBM Plex Mono', monospace;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html{height:100%;overscroll-behavior-y:none;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--font-body);min-height:100%;
+       padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom);
+       -webkit-user-select:none;user-select:none;}
+  input, textarea{-webkit-user-select:text;user-select:text;}
+  #app{max-width:960px;margin:0 auto;padding:28px 20px 60px;}
+
+  .eyebrow{font-family:var(--font-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint);}
+  h1,h2,h3{font-family:var(--font-display);margin:0;line-height:1.15;}
+  p{line-height:1.55;color:var(--ink-soft);}
+
+  /* ---------- top bar ---------- */
+  .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:26px;flex-wrap:wrap;gap:10px;}
+  .brand{display:flex;align-items:center;gap:10px;}
+  .brand-mark{width:38px;height:38px;border-radius:11px;background:linear-gradient(155deg,var(--readwrite),var(--visual));position:relative;flex:none;}
+  .brand-mark svg{position:absolute;inset:0;margin:auto;}
+  .brand-name{font-family:var(--font-display);font-weight:700;font-size:19px;}
+  .brand-sub{font-family:var(--font-mono);font-size:10.5px;color:var(--ink-faint);letter-spacing:.04em;margin-top:1px;}
+  .home-link{font-family:var(--font-mono);font-size:12px;color:var(--ink-soft);background:var(--card);border:1px solid var(--line);padding:8px 14px;border-radius:999px;cursor:pointer;}
+  .home-link:hover{border-color:var(--line-strong);}
+
+  /* ---------- trail ---------- */
+  .trail{display:flex;align-items:flex-start;justify-content:space-between;position:relative;margin:6px 0 30px;padding:0 6px;}
+  .trail::before{content:"";position:absolute;top:19px;left:26px;right:26px;height:0;border-top:3px dashed var(--line-strong);z-index:0;}
+  .stop{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:7px;flex:1;}
+  .stop-dot{width:40px;height:40px;border-radius:50%;background:var(--card);border:3px solid var(--line-strong);display:flex;align-items:center;justify-content:center;font-size:17px;transition:transform .2s ease;}
+  .stop-label{font-family:var(--font-mono);font-size:10px;color:var(--ink-faint);text-align:center;max-width:80px;}
+  .stop.done .stop-dot{background:var(--readwrite);border-color:var(--readwrite-deep);color:#fff;}
+  .stop.active .stop-dot{background:var(--visual);border-color:var(--visual-deep);color:#fff;transform:scale(1.12);}
+  .stop.active .stop-label{color:var(--ink);font-weight:600;}
+  .subdots{display:flex;gap:4px;margin-top:2px;}
+  .subdot{width:6px;height:6px;border-radius:50%;background:var(--line-strong);}
+  .subdot.on{background:var(--visual);}
+
+  /* ---------- cards ---------- */
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius-lg);padding:28px;}
+  .card + .card{margin-top:16px;}
+
+  /* ---------- start screen ---------- */
+  .hero{text-align:center;padding:26px 10px 10px;}
+  .hero h1{font-size:34px;}
+  .hero p{max-width:520px;margin:12px auto 0;font-size:15px;}
+  .role-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:26px;}
+  @media (max-width:620px){.role-grid{grid-template-columns:1fr;}}
+  .role-card{border-radius:var(--radius-lg);padding:26px 22px;text-align:left;cursor:pointer;border:2px solid transparent;transition:transform .15s ease, border-color .15s ease;}
+  .role-card:hover{transform:translateY(-3px);}
+  .role-card.student{background:var(--visual-soft);}
+  .role-card.student:hover{border-color:var(--visual);}
+  .role-card.teacher{background:var(--kinesthetic-soft);}
+  .role-card.teacher:hover{border-color:var(--kinesthetic);}
+  .role-icon{font-size:30px;}
+  .role-card h3{font-size:20px;margin-top:10px;}
+  .role-card p{font-size:13.5px;margin-top:6px;color:var(--ink-soft);}
+  .role-cta{margin-top:14px;font-family:var(--font-mono);font-size:11.5px;font-weight:600;letter-spacing:.03em;}
+  .role-card.student .role-cta{color:var(--visual-deep);}
+  .role-card.teacher .role-cta{color:var(--kinesthetic-deep);}
+
+  .context-strip{display:flex;gap:18px;flex-wrap:wrap;justify-content:center;margin-top:28px;padding-top:20px;border-top:1px solid var(--line);}
+  .context-item{font-family:var(--font-mono);font-size:11px;color:var(--ink-faint);display:flex;align-items:center;gap:6px;}
+  .context-item b{color:var(--ink-soft);font-weight:600;}
+
+  /* ---------- buttons ---------- */
+  .btn{font-family:var(--font-body);font-weight:600;font-size:14px;border-radius:999px;border:none;cursor:pointer;padding:12px 24px;transition:transform .12s ease, opacity .12s ease;}
+  .btn:active{transform:scale(.97);}
+  .btn-primary{background:var(--ink);color:#fff;}
+  .btn-primary:disabled{opacity:.35;cursor:not-allowed;}
+  .btn-ghost{background:transparent;color:var(--ink-soft);border:1px solid var(--line-strong);}
+  .btn-row{display:flex;justify-content:space-between;align-items:center;margin-top:22px;}
+
+  /* ---------- form ---------- */
+  .field{margin-bottom:16px;}
+  .field label{display:block;font-family:var(--font-mono);font-size:11px;color:var(--ink-faint);letter-spacing:.05em;text-transform:uppercase;margin-bottom:6px;}
+  .field input, .field select{width:100%;padding:11px 13px;border-radius:var(--radius-sm);border:1.5px solid var(--line-strong);font-family:var(--font-body);font-size:15px;background:var(--paper-alt);color:var(--ink);}
+  .field input:focus, .field select:focus{outline:2px solid var(--visual);outline-offset:1px;}
+  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 16px;}
+  @media (max-width:520px){.form-grid{grid-template-columns:1fr;}}
+  .error-text{color:var(--auditory-deep);font-size:12.5px;margin-top:-10px;margin-bottom:14px;display:none;}
+  .error-text.show{display:block;}
+
+  /* ---------- questionnaire ---------- */
+  .q-count{font-family:var(--font-mono);font-size:11px;color:var(--ink-faint);margin-bottom:6px;}
+  .q-prompt{font-family:var(--font-display);font-size:22px;font-weight:600;margin-bottom:20px;}
+  .opt-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  @media (max-width:560px){.opt-grid{grid-template-columns:1fr;}}
+  .opt{display:flex;align-items:flex-start;gap:12px;padding:16px;border-radius:var(--radius-md);border:2px solid var(--line);background:var(--paper-alt);cursor:pointer;text-align:left;font-family:var(--font-body);}
+  .opt:hover{border-color:var(--line-strong);}
+  .opt .icon{font-size:22px;flex:none;}
+  .opt.selected{border-color:var(--ink);background:var(--card);}
+  .opt.style-V.selected{border-color:var(--visual);background:var(--visual-soft);}
+  .opt.style-A.selected{border-color:var(--auditory);background:var(--auditory-soft);}
+  .opt.style-R.selected{border-color:var(--readwrite);background:var(--readwrite-soft);}
+  .opt.style-K.selected{border-color:var(--kinesthetic);background:var(--kinesthetic-soft);}
+  .opt span.txt{font-size:14.5px;color:var(--ink);}
+
+  /* ---------- loading ---------- */
+  .loading-wrap{text-align:center;padding:60px 10px;}
+  .spinner{width:54px;height:54px;border-radius:50%;border:5px solid var(--line);border-top-color:var(--visual);margin:0 auto 18px;animation:spin 0.9s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .loading-msg{font-family:var(--font-mono);font-size:12.5px;color:var(--ink-faint);}
+
+  /* ---------- result ---------- */
+  .badge-row{display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+  .style-badge{display:inline-flex;align-items:center;gap:9px;padding:10px 18px;border-radius:999px;font-family:var(--font-display);font-weight:700;font-size:17px;}
+  .style-badge.V{background:var(--visual-soft);color:var(--visual-deep);}
+  .style-badge.A{background:var(--auditory-soft);color:var(--auditory-deep);}
+  .style-badge.R{background:var(--readwrite-soft);color:var(--readwrite-deep);}
+  .style-badge.K{background:var(--kinesthetic-soft);color:var(--kinesthetic-deep);}
+  .confidence{font-family:var(--font-mono);font-size:12.5px;color:var(--ink-faint);}
+
+  .bar-list{margin-top:22px;display:flex;flex-direction:column;gap:10px;}
+  .bar-row{display:grid;grid-template-columns:120px 1fr 44px;align-items:center;gap:10px;}
+  .bar-label{font-family:var(--font-mono);font-size:12px;color:var(--ink-soft);}
+  .bar-track{height:11px;border-radius:6px;background:var(--paper-alt);overflow:hidden;}
+  .bar-fill{height:100%;border-radius:6px;}
+  .bar-fill.V{background:var(--visual);} .bar-fill.A{background:var(--auditory);}
+  .bar-fill.R{background:var(--readwrite);} .bar-fill.K{background:var(--kinesthetic);}
+  .bar-pct{font-family:var(--font-mono);font-size:12px;color:var(--ink-faint);text-align:right;}
+
+  .reco-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:22px;}
+  @media (max-width:600px){.reco-grid{grid-template-columns:1fr;}}
+  .reco-card{background:var(--paper-alt);border-radius:var(--radius-md);padding:16px 18px;}
+  .reco-card h3{font-size:13px;font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.05em;color:var(--ink-faint);margin-bottom:8px;}
+  .reco-card p{font-size:14px;color:var(--ink);margin:0;}
+
+  .save-note{margin-top:20px;font-family:var(--font-mono);font-size:11.5px;color:var(--readwrite-deep);display:flex;align-items:center;gap:7px;}
+
+  /* ---------- login / signup (shared by teachers & students) ---------- */
+  .login-wrap{max-width:380px;margin:20px auto 0;}
+  .login-icon{font-size:34px;text-align:center;display:block;margin-bottom:6px;}
+
+  /* ---------- teacher dashboard ---------- */
+  .dash-head{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;margin-bottom:18px;}
+  .option-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  @media (max-width:620px){.option-grid{grid-template-columns:1fr;}}
+  .option-card{border-radius:var(--radius-lg);padding:22px;cursor:pointer;border:2px solid var(--line);background:var(--paper-alt);}
+  .option-card:hover{border-color:var(--line-strong);}
+  .option-card .icon{font-size:26px;}
+  .option-card h3{font-size:17px;margin-top:8px;}
+  .option-card p{font-size:13px;margin-top:5px;}
+
+  .class-chart{margin-top:10px;}
+  .roster{margin-top:22px;display:flex;flex-direction:column;gap:8px;}
+  .roster-row{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-radius:var(--radius-sm);border:1px solid var(--line);cursor:pointer;background:var(--card);}
+  .roster-row:hover{border-color:var(--line-strong);background:var(--paper-alt);}
+  .roster-name{font-size:14px;font-weight:600;}
+  .roster-meta{font-family:var(--font-mono);font-size:11px;color:var(--ink-faint);}
+  .mini-badge{font-family:var(--font-mono);font-size:11px;font-weight:600;padding:4px 10px;border-radius:999px;}
+  .mini-badge.V{background:var(--visual-soft);color:var(--visual-deep);}
+  .mini-badge.A{background:var(--auditory-soft);color:var(--auditory-deep);}
+  .mini-badge.R{background:var(--readwrite-soft);color:var(--readwrite-deep);}
+  .mini-badge.K{background:var(--kinesthetic-soft);color:var(--kinesthetic-deep);}
+  .new-tag{font-family:var(--font-mono);font-size:9.5px;font-weight:600;letter-spacing:.04em;color:var(--readwrite-deep);background:var(--readwrite-soft);padding:2px 7px;border-radius:999px;margin-left:8px;}
+
+  .back-link{font-family:var(--font-mono);font-size:12px;color:var(--ink-soft);cursor:pointer;display:inline-flex;align-items:center;gap:5px;margin-bottom:14px;}
+  .back-link:hover{color:var(--ink);}
+
+  .profile-head{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:14px;}
+  .profile-meta{font-family:var(--font-mono);font-size:12px;color:var(--ink-faint);margin-top:4px;}
+
+  .footer-note{text-align:center;margin-top:34px;font-family:var(--font-mono);font-size:10.5px;color:var(--ink-faint);}
+
+  /* ---------- child-friendly / interactive ---------- */
+  @keyframes wiggle{0%,100%{transform:rotate(0deg);}25%{transform:rotate(-6deg);}75%{transform:rotate(6deg);}}
+  @keyframes popIn{0%{transform:scale(.85);opacity:0;}100%{transform:scale(1);opacity:1;}}
+  @keyframes floaty{0%,100%{transform:translateY(0);}50%{transform:translateY(-5px);}}
+  @keyframes confettiFall{0%{transform:translateY(-10px) rotate(0deg);opacity:1;}100%{transform:translateY(70px) rotate(280deg);opacity:0;}}
+
+  .mascot-row{display:flex;align-items:center;gap:12px;margin-bottom:14px;animation:popIn .35s ease;}
+  .mascot-face{font-size:38px;flex:none;animation:floaty 2.6s ease-in-out infinite;cursor:default;}
+  .mascot-face:hover{animation:wiggle .5s ease;}
+  .mascot-bubble{background:var(--card);border:2px solid var(--line-strong);border-radius:var(--radius-md);padding:10px 14px;font-family:var(--font-body);font-size:13.5px;color:var(--ink);position:relative;}
+
+  .role-card{animation:popIn .3s ease;}
+  .role-card:active{transform:scale(.96) translateY(-1px);}
+  .btn-primary:hover{transform:translateY(-1px);}
+  .opt{transition:transform .12s ease, border-color .12s ease, background .12s ease;}
+  .opt:hover{transform:translateY(-2px) scale(1.01);}
+  .opt.selected{animation:popIn .2s ease;}
+  .stop-dot{cursor:default;}
+  .stop.active .stop-dot{animation:floaty 1.6s ease-in-out infinite;}
+
+  .confetti-strip{position:relative;height:0;overflow:visible;}
+  .confetti-piece{position:absolute;top:0;width:8px;height:8px;border-radius:2px;animation:confettiFall 1.1s ease-in forwards;}
+
+  .cheer-text{font-family:var(--font-mono);font-size:11.5px;color:var(--readwrite-deep);margin-top:8px;}
+
+  .forgot-link{text-align:center;margin-top:-6px;margin-bottom:16px;font-family:var(--font-mono);font-size:12px;color:var(--visual-deep);cursor:pointer;text-decoration:underline;}
+  .forgot-link:hover{color:var(--visual);}
+  .reset-note{background:var(--readwrite-soft);border-radius:var(--radius-md);padding:14px 16px;font-size:13.5px;color:var(--ink);margin-top:14px;}
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+/* ================= BACKEND API SETUP =================
+   Point this at your running Express backend (see /backend in this
+   project). During local development that's usually:
+     http://localhost:4000/api
+   For a real device or a hosted deployment, replace it with the
+   backend's real address, e.g. https://landas-api.yourdomain.com/api
+==================================================== */
+var API_BASE = "http://localhost:4000/api";
+
+/* Thin fetch wrapper: attaches the JWT (when present), parses JSON,
+   and turns a non-2xx response into a rejected promise carrying the
+   server's { error } message, so callers can do res.error the same
+   way they used to check Supabase's res.error. */
+var authToken = null;
+function api(path, options){
+  options = options || {};
+  var headers = Object.assign({ "Content-Type": "application/json" }, options.headers || {});
+  if(authToken) headers["Authorization"] = "Bearer " + authToken;
+  return fetch(API_BASE + path, Object.assign({}, options, { headers: headers }))
+    .then(function(resp){
+      return resp.json().catch(function(){ return {}; }).then(function(body){
+        if(!resp.ok){ return { error: body.error || ("Request failed (" + resp.status + ")") }; }
+        return body;
+      });
+    })
+    .catch(function(){
+      return { error: "Could not reach the server. Check your connection and that the backend is running." };
+    });
+}
+
+
+/* ================= data ================= */
+var STYLE_NAMES = {V:"Visual", A:"Auditory", R:"Read/Write", K:"Kinesthetic"};
+var STYLE_ICON = {V:"\uD83D\uDC40", A:"\uD83D\uDC42", R:"\uD83D\uDCD6", K:"\u270B"};
+
+var QUESTIONS = [
+  {p:"When your teacher explains something new, what helps you understand best?",
+   o:[["V","Looking at pictures, charts, or a video"],["A","Listening closely and asking questions"],
+      ["R","Reading the words and taking notes"],["K","Trying it out myself with my hands"]]},
+  {p:"You want to remember a new word. What do you do?",
+   o:[["V","Picture how the word looks, or draw it"],["A","Say it out loud again and again"],
+      ["R","Write it down a few times"],["K","Trace it in the air or on the desk"]]},
+  {p:"Which activity sounds like the most fun to you?",
+   o:[["V","Watching a colorful cartoon or diagram"],["A","Listening to a story or song"],
+      ["R","Reading a book on my own"],["K","Building or making something"]]},
+  {p:"When you need directions to a place, you like to...",
+   o:[["V","Look at a map or picture of the place"],["A","Ask someone to tell you the way"],
+      ["R","Read the street signs and written directions"],["K","Walk around a little to figure it out"]]},
+  {p:"How do you like to show what you learned?",
+   o:[["V","Drawing a picture or making a poster"],["A","Telling someone out loud"],
+      ["R","Writing it down"],["K","Acting it out or making a model"]]},
+  {p:"Before playing a new game, you prefer to...",
+   o:[["V","See a picture of how to play"],["A","Hear someone explain the rules"],
+      ["R","Read the instructions myself"],["K","Just start playing and learn as you go"]]},
+  {p:"When you're stuck on something hard, you usually...",
+   o:[["V","Draw it or picture it in your mind"],["A","Talk it out with a friend or teacher"],
+      ["R","Look it up and read about it"],["K","Try different things until one works"]]},
+  {p:"Which classroom corner would you visit first?",
+   o:[["V","The corner with posters and picture charts"],["A","The corner where you can listen to stories"],
+      ["R","The corner full of books"],["K","The corner with blocks and hands-on toys"]]}
+];
+
+var RECS = {
+  V:{kid:"You learn best with your eyes. Try using colors, pictures, and charts when you study.",
+     adult:"Use diagrams, color-coding, mind maps, and short videos. Seat near visual displays and pair words with images."},
+  A:{kid:"You learn best with your ears. Try saying things out loud or listening to songs and stories.",
+     adult:"Use discussions, read-alouds, songs or rhymes, and verbal instructions. Invite the child to explain answers aloud."},
+  R:{kid:"You learn best with words. Try reading books and writing notes about what you learn.",
+     adult:"Provide worksheets, word lists, written instructions, and journaling activities. Encourage note-taking."},
+  K:{kid:"You learn best by doing. Try hands-on activities, building things, and moving while you learn.",
+     adult:"Use manipulatives, role-play, hands-on experiments, and movement breaks. Let the child act out ideas."}
+};
+
+var GRADES = ["Grade 1","Grade 2","Grade 3","Grade 4","Grade 5","Grade 6"];
+
+var SCHOOLS = [
+  "Abejao Elementary School",
+  "Asgad Elementary School",
+  "Bagtong Central Elementary School",
+  "Balud Elementary School",
+  "Buabua Elementary School",
+  "Burak Elementary School",
+  "Butig Elementary School",
+  "Cagaut Elementary School",
+  "Camanga Elementary School",
+  "Cantomoja Elementary School",
+  "Carapdapan Elementary School",
+  "Caridad Elementary School",
+  "Casili-on Elementary School",
+  "Iberan Elementary School",
+  "Jagnaya Elementary School",
+  "Lusod Elementary School",
+  "Malbog Elementary School",
+  "Salcedo Central Elementary School",
+  "Seguinon Elementary School",
+  "Sto. Ni\u00F1o Elementary School",
+  "Tacla-on Elementary School",
+  "Tagbacan Elementary School",
+  "Talangdawan Elementary School"
+];
+
+/* ================= state ================= */
+var state = {
+  screen: "start",
+  demo: {name:"", age:"", school:"", grade:"", section:""},
+  qIndex: 0,
+  answers: {},
+  result: null,
+  teacherLoggedIn: false,
+  teacherGrade: null,
+  teacherSchool: null,
+  teacherName: null,
+  studentLoggedIn: false,
+  currentStudent: null,
+  currentUser: null,
+  cachedRoster: [],
+  loadingMessage: "",
+  authErrorMsg: "",
+  signupSuccess: false,
+  loginError: false,
+  selectedStudent: null,
+  resetSent: false
+};
+
+function gradeRoster(){
+  return state.cachedRoster || [];
+}
+
+/* Only students who have completed the quiz show up on a teacher's roster.
+   The backend scopes this to the logged-in teacher's own school+grade. */
+function fetchRoster(){
+  return api("/students/roster", { method: "GET" }).then(function(res){
+    if(res.error){ console.error(res.error); return []; }
+    return res.map(function(r){
+      return {name:r.name, school:r.school, grade:r.grade, section:r.section, style:r.style, conf:r.confidence, isNew: r.isNew};
+    });
+  });
+}
+
+function refreshRoster(nextScreen){
+  state.loadingMessage = "Refreshing\u2026";
+  state.screen = "authLoading"; render();
+  fetchRoster().then(function(roster){
+    state.cachedRoster = roster;
+    state.screen = nextScreen; render();
+  });
+}
+
+/* Called once, right after a logged-in student finishes the quiz.
+   Hits the backend's PUT /students/me/result, authenticated by the
+   student's own JWT — the server derives which row to update from the
+   token, so a student can only ever update their own result. */
+function updateStudentResult(result){
+  if(!state.currentStudent) return Promise.resolve({error:"Not logged in."});
+  return api("/students/me/result", {
+    method: "PUT",
+    body: JSON.stringify({ style: result.style, confidence: result.confidence })
+  });
+}
+
+function computeResult(answers){
+  var counts = {V:0,A:0,R:0,K:0};
+  Object.keys(answers).forEach(function(k){ counts[answers[k]]++; });
+  var total = Object.keys(answers).length;
+  var top = "V";
+  Object.keys(counts).forEach(function(s){ if(counts[s] > counts[top]) top = s; });
+  var pct = {};
+  Object.keys(counts).forEach(function(s){ pct[s] = total ? Math.round((counts[s]/total)*100) : 0; });
+  return {style: top, confidence: pct[top], pct: pct};
+}
+
+function classDistribution(roster){
+  var counts = {V:0,A:0,R:0,K:0};
+  roster.forEach(function(s){ counts[s.style]++; });
+  var total = roster.length;
+  var pct = {};
+  Object.keys(counts).forEach(function(s){ pct[s] = total ? Math.round((counts[s]/total)*100) : 0; });
+  return pct;
+}
+
+/* ---- shared post-auth session loaders ----
+   Called with the backend's { token, profile } response from either
+   /auth/login or /auth/signup/teacher — no extra round trip needed,
+   since the backend already returns the profile inline. */
+function loadTeacherSession(token, profile){
+  authToken = token;
+  state.teacherName = profile.name;
+  state.teacherSchool = profile.school;
+  state.teacherGrade = profile.grade;
+  state.teacherLoggedIn = true;
+  state.authErrorMsg = "";
+  state.loadingMessage = "Loading your class\u2026";
+  state.screen = "authLoading"; render();
+  return fetchRoster().then(function(roster){
+    state.cachedRoster = roster;
+    state.screen = "teacherHome"; render();
+  });
+}
+
+function loadStudentSession(token, profile){
+  authToken = token;
+  state.currentStudent = profile;
+  state.studentLoggedIn = true;
+  state.demo = {name:profile.name, age:profile.age, school:profile.school, grade:profile.grade, section:profile.section};
+  state.authErrorMsg = "";
+  if(profile.style){
+    state.result = {style:profile.style, confidence:profile.confidence};
+    state.screen = "studentHome"; render();
+  } else {
+    state.screen = "quiz"; state.qIndex=0; state.answers={}; render();
+  }
+}
+
+/* ================= render helpers ================= */
+function el(tag, attrs, children){
+  var e = document.createElement(tag);
+  attrs = attrs || {};
+  Object.keys(attrs).forEach(function(k){
+    if(k === "class") e.className = attrs[k];
+    else if(k === "html") e.innerHTML = attrs[k];
+    else if(k === "onclick") e.addEventListener("click", attrs[k]);
+    else e.setAttribute(k, attrs[k]);
+  });
+  (children||[]).forEach(function(c){ if(c) e.appendChild(c); });
+  return e;
+}
+function txt(t){ return document.createTextNode(t); }
+
+function topbar(homeAction){
+  var bar = el("div",{class:"topbar"});
+  var brand = el("div",{class:"brand"},[
+    el("div",{class:"brand-mark"},[
+      (function(){var s=document.createElementNS("http://www.w3.org/2000/svg","svg");
+        s.setAttribute("width","20");s.setAttribute("height","20");s.setAttribute("viewBox","0 0 20 20");
+        s.innerHTML='<path d="M2 16 C 6 8, 8 14, 10 6 C 12 14, 14 8, 18 3" stroke="white" stroke-width="2" fill="none" stroke-linecap="round"/>';
+        return s;})()
+    ]),
+    el("div",{},[
+      el("div",{class:"brand-name"},[txt("Landas")]),
+      el("div",{class:"brand-sub"},[txt("VARK LEARNING TRAIL")])
+    ])
+  ]);
+  bar.appendChild(brand);
+  var loggedIn = state.teacherLoggedIn || state.studentLoggedIn;
+  bar.appendChild(el("div",{class:"home-link",onclick:homeAction},[txt(loggedIn ? "\uD83D\uDD13 Log out" : "Start over")]));
+  return bar;
+}
+
+function mascot(msg){
+  return el("div",{class:"mascot-row"},[
+    el("div",{class:"mascot-face"},[txt("\uD83E\uDD89")]),
+    el("div",{class:"mascot-bubble"},[txt(msg)])
+  ]);
+}
+
+function trail(activeIndex, doneUpTo, subProgress){
+  var stops = [
+    {icon:"\uD83D\uDEA9", label:"Start"},
+    {icon:"\uD83D\uDCDD", label:"Your info"},
+    {icon:"\uD83E\uDDED", label:"Questions"},
+    {icon:"\uD83C\uDFC1", label:"Result"}
+  ];
+  var wrap = el("div",{class:"trail"});
+  stops.forEach(function(s, i){
+    var cls = "stop";
+    if(i < activeIndex) cls += " done";
+    if(i === activeIndex) cls += " active";
+    var stop = el("div",{class:cls},[
+      el("div",{class:"stop-dot"},[txt(i < activeIndex ? "\u2713" : s.icon)]),
+      el("div",{class:"stop-label"},[txt(s.label)])
+    ]);
+    if(i === 2 && i === activeIndex && subProgress){
+      var sd = el("div",{class:"subdots"});
+      for(var q=0;q<subProgress.total;q++){
+        sd.appendChild(el("div",{class:"subdot"+(q < subProgress.current ? " on":"")}));
+      }
+      stop.appendChild(sd);
+    }
+    wrap.appendChild(stop);
+  });
+  return wrap;
+}
+
+/* ================= screens ================= */
+function render(){
+  var root = document.getElementById("app");
+  root.innerHTML = "";
+  if(state.screen === "start") return renderStartScreen(root);
+  if(state.screen === "quiz") return renderQuizScreen(root);
+  if(state.screen === "loading") return renderLoadingScreen(root);
+  if(state.screen === "result") return renderResultScreen(root);
+  if(state.screen === "login") return renderLoginScreen(root);
+  if(state.screen === "signup") return renderSignupScreen(root);
+  if(state.screen === "studentLogin") return renderStudentLoginScreen(root);
+  if(state.screen === "studentSignup") return renderStudentSignupScreen(root);
+  if(state.screen === "studentHome") return renderStudentHomeScreen(root);
+  if(state.screen === "forgotPassword") return renderForgotPasswordScreen(root);
+  if(state.screen === "authLoading") return renderAuthLoadingScreen(root);
+  if(state.screen === "teacherHome") return renderTeacherHome(root);
+  if(state.screen === "classDash") return renderClassDash(root);
+  if(state.screen === "studentPicker") return renderStudentPicker(root);
+  if(state.screen === "studentProfile") return renderStudentProfile(root);
+}
+
+function goHome(){
+  authToken = null;
+  state.screen="start"; state.demo={name:"",age:"",school:"",grade:"",section:""}; state.answers={}; state.qIndex=0; state.result=null;
+  state.teacherLoggedIn=false; state.teacherGrade=null; state.teacherSchool=null; state.teacherName=null;
+  state.studentLoggedIn=false; state.currentStudent=null; state.currentUser=null;
+  state.cachedRoster=[]; state.resetSent=false; state.authErrorMsg=""; state.signupSuccess=false;
+  render();
+}
+
+function renderAuthLoadingScreen(root){
+  root.appendChild(topbar(goHome));
+  var card = el("div",{class:"card"});
+  card.appendChild(el("div",{class:"loading-wrap"},[
+    el("div",{class:"spinner"}),
+    el("div",{class:"loading-msg"},[txt(state.loadingMessage||"One moment\u2026")])
+  ]));
+  root.appendChild(card);
+}
+
+function renderStartScreen(root){
+  root.appendChild(topbar(goHome));
+  root.appendChild(mascot("Hi there! I'm Landi the owl. Tap a card below to get started!"));
+  var card = el("div",{class:"card"});
+  card.appendChild(el("div",{class:"hero"},[
+    el("div",{class:"eyebrow"},[txt("DESIGN AND DEVELOPMENT OF AN INTELLIGENT SYSTEM FOR PREDICTIVE MODELING OF STUDENTS' LEARNING STYLES USING DATA ANALYTICS")]),
+    el("h1",{},[txt("Every learner walks a different trail.")]),
+    el("p",{},[txt("Landas helps young students discover whether they learn best by seeing, hearing, reading, or doing \u2014 and gives teachers clear, practical ways to help.")]),
+    el("p",{style:"margin-top:6px;font-family:var(--font-mono);font-size:11px;color:var(--ink-faint);"},[txt("Abejao Elementary School \u00B7 Salcedo, Eastern Samar")])
+  ]));
+  var grid = el("div",{class:"role-grid"});
+  var studentCard = el("div",{class:"role-card student",onclick:function(){ state.authErrorMsg=""; state.screen="studentLogin"; render(); }},[
+    el("div",{class:"role-icon"},[txt("\uD83E\uDDED")]),
+    el("h3",{},[txt("I'm a student")]),
+    el("p",{},[txt("Log in to your account (or create one) to walk the trail: answer a fun picture quiz and find out how you learn best.")]),
+    el("div",{class:"role-cta"},[txt("GO TO MY TRAIL \u2192")])
+  ]);
+  var teacherCard = el("div",{class:"role-card teacher",onclick:function(){ state.authErrorMsg=""; state.screen="login"; render(); }},[
+    el("div",{class:"role-icon"},[txt("\uD83E\uDDD1\u200D\uD83C\uDFEB")]),
+    el("h3",{},[txt("I'm a teacher")]),
+    el("p",{},[txt("Log in to see your class's learning styles at a glance, or look up a specific student's profile.")]),
+    el("div",{class:"role-cta"},[txt("GO TO DASHBOARD \u2192")])
+  ]);
+  grid.appendChild(studentCard); grid.appendChild(teacherCard);
+  card.appendChild(grid);
+  card.appendChild(el("div",{class:"context-strip"},[
+    el("div",{class:"context-item"},[txt("\uD83D\uDCCD"), el("b",{},[txt(" Salcedo, Eastern Samar")])]),
+    el("div",{class:"context-item"},[txt("\uD83C\uDFAF"), el("b",{},[txt(" VARK model")])]),
+    el("div",{class:"context-item"},[txt("\uD83D\uDC65"), el("b",{},[txt(" Students & teachers, role-based access")])])
+  ]));
+  root.appendChild(card);
+}
+
+/* ---- student: login ---- */
+function renderStudentLoginScreen(root){
+  root.appendChild(topbar(goHome));
+  root.appendChild(mascot("Welcome back! Log in to keep walking your trail."));
+  var card = el("div",{class:"card login-wrap"});
+  card.appendChild(el("span",{class:"login-icon"},[txt("\uD83E\uDDED")]));
+  card.appendChild(el("h2",{style:"text-align:center;"},[txt("Student login")]));
+  card.appendChild(el("p",{style:"text-align:center;font-size:13px;"},[txt("Log in to take the quiz or see your saved result.")]));
+
+  var wrap = el("div",{style:"margin-top:18px;"});
+  wrap.appendChild(el("div",{class:"field"},[el("label",{},[txt("Email")]), el("input",{type:"email",id:"sl-email",placeholder:"e.g. miguel@example.com"})]));
+  wrap.appendChild(el("div",{class:"field"},[el("label",{},[txt("Password")]), el("input",{type:"password",id:"sl-pass",placeholder:"\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022"})]));
+  wrap.appendChild(el("div",{class:"forgot-link",onclick:function(){ state.authErrorMsg=""; state.screen="forgotPassword"; render(); }},[txt("Forgot password?")]));
+  if(state.authErrorMsg){
+    wrap.appendChild(el("div",{class:"error-text show"},[txt(state.authErrorMsg)]));
+  }
+  card.appendChild(wrap);
+
+  var row = el("div",{class:"btn-row"});
+  row.appendChild(el("button",{class:"btn btn-ghost",onclick:goHome},[txt("Back")]));
+  row.appendChild(el("button",{class:"btn btn-primary",onclick:function(){
+    var email=document.getElementById("sl-email").value.trim();
+    var pass=document.getElementById("sl-pass").value;
+    if(!email || !pass){
+      state.authErrorMsg = "Please enter your email and password."; render(); return;
+    }
+    state.loadingMessage = "Logging you in\u2026";
+    state.screen = "authLoading"; render();
+    api("/auth/login", { method:"POST", body: JSON.stringify({email:email, password:pass}) }).then(function(res){
+      if(res.error || res.role !== "student"){
+        state.screen="studentLogin"; state.authErrorMsg = res.error || "That account isn't a student account."; render(); return;
+      }
+      loadStudentSession(res.token, res.profile);
+    });
+  }},[txt("Log in")]));
+  card.appendChild(row);
+  card.appendChild(el("div",{style:"text-align:center;margin-top:16px;font-size:12.5px;"},[
+    txt("New here? "),
+    el("span",{class:"forgot-link",style:"margin:0;display:inline;",onclick:function(){ state.authErrorMsg=""; state.signupSuccess=false; state.screen="studentSignup"; render(); }},[txt("Create a student account")])
+  ]));
+  root.appendChild(card);
+}
+
+/* ---- student: sign up ---- */
+function renderStudentSignupScreen(root){
+  root.appendChild(topbar(goHome));
+  root.appendChild(mascot("Let's set up your trail! Fill this in with a grown-up if you need help."));
+  var card = el("div",{class:"card login-wrap"});
+  card.appendChild(el("span",{class:"login-icon"},[txt("\uD83C\uDF9F\uFE0F")]));
+  card.appendChild(el("h2",{style:"text-align:center;"},[txt("Create your account")]));
+  card.appendChild(el("p",{style:"text-align:center;font-size:13px;"},[txt("Sign up once, then log in anytime to take the quiz or see your result.")]));
+
+  var wrap = el("div",{style:"margin-top:18px;"});
+  wrap.appendChild(el("div",{class:"field"},[el("label",{},[txt("First name")]), el("input",{type:"text",id:"ssu-name",placeholder:"e.g. Miguel"})]));
+  wrap.appendChild(el("div",{class:"field"},[el("label",{},[txt("Email")]), el("input",{type:"email",id:"ssu-email",placeholder:"e.g. miguel@example.com"})]));
+  wrap.appendChild(el("div",{class:"field"},[el("label",{},[txt("Password")]), el("input",{type:"password",id:"ssu-pass",placeholder:"At least 6 characters"})]));
+
+  var schoolSel = el("select",{id:"ssu-school"},[el("option",{value:""},[txt("Select your school")])]);
+  SCHOOLS.forEach(function(s){ schoolSel.appendChild(el("option",{value:s},[txt(s)])); });
+  wrap.appendChild(el("div",{class:"field"},[el("label",{},[txt("School")]), schoolSel]));
+  wrap.appendChild(el("p",{style:"margin-top:-10px;margin-bottom:14px;font-size:12px;"},[txt("Salcedo, Eastern Samar schools only.")]));
+
+  var grid = el("div",{class:"form-grid"});
+  grid.appendChild(el("div",{class:"field"},[
+    el("label",{},[txt("Age")]),
+    el("input",{type:"number", id:"ssu-age", min:"5", max:"12", placeholder:"e.g. 9"})
+  ]));
+  var gradeSel = el("select",{id:"ssu-grade"},[el("option",{value:""},[txt("Select grade")])]);
+  GRADES.forEach(function(g){ gradeSel.appendChild(el("option",{value:g},[txt(g)])); });
+  grid.appendChild(el("div",{class:"field"},[el("label",{},[txt("Grade")]), gradeSel]));
+  wrap.appendChild(grid);
+
+  wrap.appendChild(el("div",{class:"field",style:"max-width:260px;"},[
+    el("label",{},[txt("Section")]),
+    el("input",{type:"text", id:"ssu-section", placeholder:"e.g. Sampaguita"})
+  ]));
+
+  if(state.signupSuccess){
+    wrap.appendChild(el("div",{class:"reset-note"},[txt("\u2713 Account created! Check your email to confirm it, then come back and log in.")]));
+  }
+  if(state.authErrorMsg){
+    wrap.appendChild(el("div",{class:"error-text show"},[txt(state.authErrorMsg)]));
+  }
+  card.appendChild(wrap);
+
+  var row = el("div",{class:"btn-row"});
+  row.appendChild(el("button",{class:"btn btn-ghost",onclick:function(){ state.authErrorMsg=""; state.signupSuccess=false; state.screen="studentLogin"; render(); }},[txt("\u2190 Back to login")]));
+  row.appendChild(el("button",{class:"btn btn-primary",onclick:function(){
+    var name=document.getElementById("ssu-name").value.trim();
+    var email=document.getElementById("ssu-email").value.trim();
+    var pass=document.getElementById("ssu-pass").value;
+    var school=document.getElementById("ssu-school").value;
+    var age=document.getElementById("ssu-age").value.trim();
+    var grade=document.getElementById("ssu-grade").value;
+    var section=document.getElementById("ssu-section").value.trim();
+    if(!name||!email||!pass||!school||!age||!grade||!section){
+      state.authErrorMsg="Please fill in every field."; render(); return;
+    }
+    state.loadingMessage="Creating your account\u2026";
+    state.screen="authLoading"; render();
+    api("/auth/signup/student", {
+      method:"POST",
+      body: JSON.stringify({ name:name, email:email, password:pass, school:school, age:age, grade:grade, section:section })
+    }).then(function(res){
+      if(res.error){
+        state.screen="studentSignup"; state.authErrorMsg=res.error; render(); return;
+      }
+      // No email confirmation step with our own backend — the account
+      // and row are created together, so we can log straight in.
+      loadStudentSession(res.token, res.profile);
+    });
+  }},[txt("Create account")]));
+  card.appendChild(row);
+  root.appendChild(card);
+}
+
+/* ---- student: signed-in home (already has a saved result) ---- */
+function renderStudentHomeScreen(root){
+  root.appendChild(topbar(goHome));
+  root.appendChild(mascot("Welcome back, "+(state.currentStudent ? state.currentStudent.name : "friend")+"!"));
+  var r = state.result;
+  var card = el("div",{class:"card"});
+  card.appendChild(el("div",{class:"eyebrow"},[txt("YOUR SAVED RESULT")]));
+  var row = el("div",{class:"badge-row",style:"margin-top:10px;"});
+  row.appendChild(el("div",{class:"style-badge "+r.style},[txt(STYLE_ICON[r.style]+" "+STYLE_NAMES[r.style]+" learner")]));
+  row.appendChild(el("div",{class:"confidence"},[txt("CONFIDENCE: "+r.confidence+"%")]));
+  card.appendChild(row);
+
+  card.appendChild(el("div",{class:"reco-card",style:"margin-top:20px;"},[
+    el("h3",{},[txt("For you")]),
+    el("p",{},[txt(RECS[r.style].kid)])
+  ]));
+
+  var btnRow = el("div",{class:"btn-row"});
+  btnRow.appendChild(el("button",{class:"btn btn-ghost",onclick:goHome},[txt("\uD83D\uDD13 Log out")]));
+  btnRow.appendChild(el("button",{class:"btn btn-primary",onclick:function(){
+    state.screen="quiz"; state.qIndex=0; state.answers={}; render();
+  }},[txt("Retake the quiz \u2192")]));
+  card.appendChild(btnRow);
+  root.appendChild(card);
+}
+
+/* ---- student: questionnaire ---- */
+var CHEERS = ["You're doing great, keep going!", "Nice! Almost halfway there!", "You're doing awesome!", "Keep it up, you've got this!", "Great choices so far!", "Not much longer now!", "You're almost at the finish line!", "Last one \u2014 you're a star!"];
+function renderQuizScreen(root){
+  root.appendChild(topbar(goHome));
+  root.appendChild(mascot(CHEERS[state.qIndex] || "You're doing great!"));
+  root.appendChild(trail(2, 0, {current: state.qIndex, total: QUESTIONS.length}));
+  var q = QUESTIONS[state.qIndex];
+  var card = el("div",{class:"card"});
+  card.appendChild(el("div",{class:"q-count"},[txt("QUESTION "+(state.qIndex+1)+" OF "+QUESTIONS.length)]));
+  card.appendChild(el("div",{class:"q-prompt"},[txt(q.p)]));
+
+  var grid = el("div",{class:"opt-grid"});
+  var selected = state.answers[state.qIndex];
+  q.o.forEach(function(opt){
+    var style = opt[0], label = opt[1];
+    var cls = "opt style-"+style + (selected===style ? " selected":"");
+    var optEl = el("div",{class:cls,onclick:function(){
+      state.answers[state.qIndex] = style;
+      render();
+    }},[
+      el("div",{class:"icon"},[txt(STYLE_ICON[style])]),
+      el("span",{class:"txt"},[txt(label)])
+    ]);
+    grid.appendChild(optEl);
+  });
+  card.appendChild(grid);
+
+  var err = el("div",{class:"error-text show",id:"quiz-err",style:"display:none;"},[txt("Pick an answer to continue.")]);
+  card.appendChild(err);
+
+  var row = el("div",{class:"btn-row"});
+  row.appendChild(el("button",{class:"btn btn-ghost",onclick:function(){
+    if(state.qIndex===0){ goHome(); return; } else { state.qIndex--; }
+    render();
+  }},[txt("Back")]));
+  var isLast = state.qIndex === QUESTIONS.length-1;
+  row.appendChild(el("button",{class:"btn btn-primary",onclick:function(){
+    if(!state.answers[state.qIndex]){
+      document.getElementById("quiz-err").style.display="block";
+      return;
+    }
+    if(isLast){
+      state.screen="loading"; render();
+      state.result = computeResult(state.answers);
+      updateStudentResult(state.result).then(function(){
+        setTimeout(function(){
+          state.screen="result"; render();
+        }, 900);
+      });
+    } else {
+      state.qIndex++; render();
+    }
+  }},[txt(isLast ? "See my results \u2192" : "Next \u2192")]));
+  card.appendChild(row);
+  root.appendChild(card);
+}
+
+function renderLoadingScreen(root){
+  root.appendChild(topbar(goHome));
+  root.appendChild(trail(2,0,{current:QUESTIONS.length,total:QUESTIONS.length}));
+  var card = el("div",{class:"card"});
+  card.appendChild(el("div",{class:"loading-wrap"},[
+    el("div",{class:"spinner"}),
+    el("div",{class:"loading-msg"},[txt("Checking your answers and finding your learning style\u2026")])
+  ]));
+  root.appendChild(card);
+}
+
+/* ---- student: result ---- */
+function renderResultScreen(root){
+  root.appendChild(topbar(goHome));
+  root.appendChild(mascot("You did it, "+(state.demo.name||"friend")+"! Here's what I found out about you."));
+  root.appendChild(trail(3, 3));
+  var r = state.result;
+  var card = el("div",{class:"card"});
+
+  var confetti = el("div",{class:"confetti-strip"});
+  var palette = ["var(--visual)","var(--auditory)","var(--readwrite)","var(--kinesthetic)"];
+  for(var i=0;i<18;i++){
+    confetti.appendChild(el("div",{class:"confetti-piece",style:"left:"+(i*5.5)+"%;background:"+palette[i%4]+";animation-delay:"+(i*0.05)+"s;"}));
+  }
+  card.appendChild(confetti);
+
+  card.appendChild(el("div",{class:"eyebrow"},[txt((state.demo.name||"Your")+"'S RESULT")]));
+  card.appendChild(el("h2",{style:"margin-top:6px;font-size:24px;"},[txt("Great job walking the trail!")]));
+
+  var row = el("div",{class:"badge-row",style:"margin-top:16px;"});
+  row.appendChild(el("div",{class:"style-badge "+r.style},[txt(STYLE_ICON[r.style]+" "+STYLE_NAMES[r.style]+" learner")]));
+  row.appendChild(el("div",{class:"confidence"},[txt("CONFIDENCE: "+r.confidence+"%")]));
+  card.appendChild(row);
+
+  var bars = el("div",{class:"bar-list"});
+  ["V","A","R","K"].forEach(function(s){
+    var pct = r.pct[s];
+    bars.appendChild(el("div",{class:"bar-row"},[
+      el("div",{class:"bar-label"},[txt(STYLE_NAMES[s])]),
+      el("div",{class:"bar-track"},[el("div",{class:"bar-fill "+s, style:"width:"+pct+"%"})]),
+      el("div",{class:"bar-pct"},[txt(pct+"%")])
+    ]));
+  });
+  card.appendChild(bars);
+
+  var recoGrid = el("div",{class:"reco-grid"});
+  recoGrid.appendChild(el("div",{class:"reco-card"},[
+    el("h3",{},[txt("For you")]),
+    el("p",{},[txt(RECS[r.style].kid)])
+  ]));
+  recoGrid.appendChild(el("div",{class:"reco-card"},[
+    el("h3",{},[txt("For your teacher & parents")]),
+    el("p",{},[txt(RECS[r.style].adult)])
+  ]));
+  card.appendChild(recoGrid);
+
+  card.appendChild(el("div",{class:"save-note"},[txt("\u2713  Saved \u2014 your "+state.demo.grade+" teacher can see this on their dashboard right away")]));
+
+  var btnRow = el("div",{class:"btn-row"});
+  btnRow.appendChild(el("button",{class:"btn btn-ghost",onclick:goHome},[txt(state.studentLoggedIn ? "\uD83D\uDD13 Log out" : "\u2190 Back to start")]));
+  card.appendChild(btnRow);
+  root.appendChild(card);
+}
+
+/* ---- teacher: login ---- */
+function renderLoginScreen(root){
+  root.appendChild(topbar(goHome));
+  root.appendChild(mascot("Hello! Log in below to open your dashboard."));
+  var card = el("div",{class:"card login-wrap"});
+  card.appendChild(el("span",{class:"login-icon"},[txt("\uD83D\uDD10")]));
+  card.appendChild(el("h2",{style:"text-align:center;"},[txt("Teacher login")]));
+  card.appendChild(el("p",{style:"text-align:center;font-size:13px;"},[txt("Log in to see your class and student results.")]));
+
+  var wrap = el("div",{style:"margin-top:18px;"});
+  wrap.appendChild(el("div",{class:"field"},[el("label",{},[txt("Email")]), el("input",{type:"email",id:"t-email",placeholder:"e.g. j.delacruz@deped.gov.ph"})]));
+  wrap.appendChild(el("div",{class:"field"},[el("label",{},[txt("Password")]), el("input",{type:"password",id:"t-pass",placeholder:"\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022"})]));
+  wrap.appendChild(el("div",{class:"forgot-link",onclick:function(){ state.authErrorMsg=""; state.screen="forgotPassword"; render(); }},[txt("Forgot password?")]));
+  if(state.authErrorMsg){
+    wrap.appendChild(el("div",{class:"error-text show"},[txt(state.authErrorMsg)]));
+  }
+  card.appendChild(wrap);
+
+  var row = el("div",{class:"btn-row"});
+  row.appendChild(el("button",{class:"btn btn-ghost",onclick:goHome},[txt("Back")]));
+  row.appendChild(el("button",{class:"btn btn-primary",onclick:function(){
+    var email=document.getElementById("t-email").value.trim();
+    var pass=document.getElementById("t-pass").value;
+    if(!email || !pass){
+      state.authErrorMsg = "Please enter your email and password."; render(); return;
+    }
+    state.loadingMessage = "Logging you in\u2026";
+    state.screen = "authLoading"; render();
+    api("/auth/login", { method:"POST", body: JSON.stringify({email:email, password:pass}) }).then(function(res){
+      if(res.error || res.role !== "teacher"){
+        state.screen="login"; state.authErrorMsg = res.error || "That account isn't a teacher account."; render(); return;
+      }
+      loadTeacherSession(res.token, res.profile);
+    });
+  }},[txt("Log in")]));
+  card.appendChild(row);
+  card.appendChild(el("div",{style:"text-align:center;margin-top:16px;font-size:12.5px;"},[
+    txt("New here? "),
+    el("span",{class:"forgot-link",style:"margin:0;display:inline;",onclick:function(){ state.authErrorMsg=""; state.signupSuccess=false; state.screen="signup"; render(); }},[txt("Create a teacher account")])
+  ]));
+  root.appendChild(card);
+}
+
+/* ---- teacher: sign up ---- */
+function renderSignupScreen(root){
+  root.appendChild(topbar(goHome));
+  root.appendChild(mascot("Great to have you! A few details and your dashboard is ready."));
+  var card = el("div",{class:"card login-wrap"});
+  card.appendChild(el("span",{class:"login-icon"},[txt("\uD83C\uDF93")]));
+  card.appendChild(el("h2",{style:"text-align:center;"},[txt("Create teacher account")]));
+  card.appendChild(el("p",{style:"text-align:center;font-size:13px;"},[txt("Sign up once, then log in anytime to see your class.")]));
+
+  var wrap = el("div",{style:"margin-top:18px;"});
+  wrap.appendChild(el("div",{class:"field"},[el("label",{},[txt("Full name")]), el("input",{type:"text",id:"su-name",placeholder:"e.g. Juana Dela Cruz"})]));
+  wrap.appendChild(el("div",{class:"field"},[el("label",{},[txt("Email")]), el("input",{type:"email",id:"su-email",placeholder:"e.g. j.delacruz@deped.gov.ph"})]));
+  wrap.appendChild(el("div",{class:"field"},[el("label",{},[txt("Password")]), el("input",{type:"password",id:"su-pass",placeholder:"At least 6 characters"})]));
+  var schoolSel = el("select",{id:"su-school"},[el("option",{value:""},[txt("Select your school")])]);
+  SCHOOLS.forEach(function(s){ schoolSel.appendChild(el("option",{value:s},[txt(s)])); });
+  wrap.appendChild(el("div",{class:"field"},[el("label",{},[txt("School")]), schoolSel]));
+  var gradeSel = el("select",{id:"su-grade"},[el("option",{value:""},[txt("Select the grade level you teach")])]);
+  GRADES.forEach(function(g){ gradeSel.appendChild(el("option",{value:g},[txt(g)])); });
+  wrap.appendChild(el("div",{class:"field"},[el("label",{},[txt("Grade level you teach")]), gradeSel]));
+
+  if(state.signupSuccess){
+    wrap.appendChild(el("div",{class:"reset-note"},[txt("\u2713 Account created! Check your email to confirm it, then come back and log in.")]));
+  }
+  if(state.authErrorMsg){
+    wrap.appendChild(el("div",{class:"error-text show"},[txt(state.authErrorMsg)]));
+  }
+  card.appendChild(wrap);
+
+  var row = el("div",{class:"btn-row"});
+  row.appendChild(el("button",{class:"btn btn-ghost",onclick:function(){ state.authErrorMsg=""; state.signupSuccess=false; state.screen="login"; render(); }},[txt("\u2190 Back to login")]));
+  row.appendChild(el("button",{class:"btn btn-primary",onclick:function(){
+    var name=document.getElementById("su-name").value.trim();
+    var email=document.getElementById("su-email").value.trim();
+    var pass=document.getElementById("su-pass").value;
+    var school=document.getElementById("su-school").value;
+    var grade=document.getElementById("su-grade").value;
+    if(!name||!email||!pass||!school||!grade){
+      state.authErrorMsg="Please fill in every field."; render(); return;
+    }
+    state.loadingMessage="Creating your account\u2026";
+    state.screen="authLoading"; render();
+    api("/auth/signup/teacher", {
+      method:"POST",
+      body: JSON.stringify({ name:name, email:email, password:pass, school:school, grade:grade })
+    }).then(function(res){
+      if(res.error){
+        state.screen="signup"; state.authErrorMsg=res.error; render(); return;
+      }
+      loadTeacherSession(res.token, res.profile);
+    });
+  }},[txt("Create account")]));
+  card.appendChild(row);
+  root.appendChild(card);
+}
+
+/* ---- forgot password (shared by teachers & students) ---- */
+function renderForgotPasswordScreen(root){
+  root.appendChild(topbar(goHome));
+  root.appendChild(mascot("No worries \u2014 let's get you a new password."));
+  var card = el("div",{class:"card login-wrap"});
+  card.appendChild(el("span",{class:"login-icon"},[txt("\uD83D\uDCE9")]));
+  card.appendChild(el("h2",{style:"text-align:center;"},[txt("Reset your password")]));
+  card.appendChild(el("p",{style:"text-align:center;font-size:13px;"},[txt("Enter your account email and we'll send you a reset link.")]));
+
+  var wrap = el("div",{style:"margin-top:18px;"});
+  wrap.appendChild(el("div",{class:"field"},[el("label",{},[txt("Email")]), el("input",{type:"email",id:"fp-email",placeholder:"e.g. j.delacruz@deped.gov.ph"})]));
+
+  if(state.resetSent){
+    wrap.appendChild(el("div",{class:"reset-note"},[txt("\u2713 If an account exists with that email, a reset link is on its way. Check your inbox (and spam folder).")]));
+  }
+  if(state.authErrorMsg){
+    wrap.appendChild(el("div",{class:"error-text show"},[txt(state.authErrorMsg)]));
+  }
+  card.appendChild(wrap);
+
+  var row = el("div",{class:"btn-row"});
+  row.appendChild(el("button",{class:"btn btn-ghost",onclick:function(){ state.resetSent=false; state.authErrorMsg=""; state.screen="login"; render(); }},[txt("\u2190 Back to login")]));
+  row.appendChild(el("button",{class:"btn btn-primary",onclick:function(){
+    var email=document.getElementById("fp-email").value.trim();
+    if(!email){ state.authErrorMsg="Please enter your email."; render(); return; }
+    state.loadingMessage="Sending reset link\u2026";
+    state.screen="authLoading"; render();
+    api("/auth/forgot-password", { method:"POST", body: JSON.stringify({email:email}) }).then(function(res){
+      state.screen="forgotPassword";
+      if(res.error){ state.authErrorMsg=res.error; } else { state.resetSent=true; state.authErrorMsg=""; }
+      render();
+    });
+  }},[txt("Send reset link")]));
+  card.appendChild(row);
+  root.appendChild(card);
+}
+
+/* ---- teacher: home / choose view ---- */
+function renderTeacherHome(root){
+  root.appendChild(topbar(goHome));
+  root.appendChild(mascot("Welcome back"+(state.teacherName ? ", "+state.teacherName.split(" ")[0] : "")+"! Here's your class."));
+  var card = el("div",{class:"card"});
+  card.appendChild(el("div",{class:"dash-head"},[
+    el("div",{},[
+      el("div",{class:"eyebrow"},[txt("TEACHER DASHBOARD \u00B7 "+state.teacherGrade.toUpperCase())]),
+      el("h2",{style:"margin-top:6px;"},[txt("Welcome back"+(state.teacherName ? ", "+state.teacherName.split(" ")[0] : ""))]),
+      el("p",{style:"margin-top:4px;font-size:13px;"},[txt("You're viewing "+state.teacherGrade+" at "+state.teacherSchool+" only \u2014 other schools and grade levels are not shown.")])
+    ]),
+    el("div",{class:"home-link",onclick:goHome},[txt("Log out")])
+  ]));
+  var grid = el("div",{class:"option-grid"});
+  grid.appendChild(el("div",{class:"option-card",onclick:function(){ state.screen="classDash"; render(); }},[
+    el("div",{class:"icon"},[txt("\uD83D\uDCCA")]),
+    el("h3",{},[txt("Class dashboard")]),
+    el("p",{},[txt("See the VARK distribution across your "+state.teacherGrade+" class and get whole-class teaching tips.")])
+  ]));
+  grid.appendChild(el("div",{class:"option-card",onclick:function(){ state.screen="studentPicker"; render(); }},[
+    el("div",{class:"icon"},[txt("\uD83E\uDDD2")]),
+    el("h3",{},[txt("Individual student")]),
+    el("p",{},[txt("Look up one "+state.teacherGrade+" student's predicted learning style and recommendations.")])
+  ]));
+  card.appendChild(grid);
+  root.appendChild(card);
+}
+
+/* ---- teacher: class dashboard ---- */
+function renderClassDash(root){
+  root.appendChild(topbar(goHome));
+  var card = el("div",{class:"card"});
+  card.appendChild(el("div",{class:"back-link",onclick:function(){ state.screen="teacherHome"; render(); }},[txt("\u2190 Dashboard")]));
+  card.appendChild(el("div",{class:"forgot-link",style:"float:right;margin-top:-2px;",onclick:function(){ refreshRoster("classDash"); }},[txt("\uD83D\uDD04 Refresh")]));
+  var roster = gradeRoster();
+  var sections = roster.filter(function(s,i){ return roster.map(function(r){return r.section;}).indexOf(s.section) === i; }).map(function(s){ return s.section; });
+  card.appendChild(el("h2",{},[txt(state.teacherGrade+" VARK distribution")]));
+  card.appendChild(el("p",{},[txt(roster.length+" students \u00B7 "+state.teacherSchool+" \u00B7 "+state.teacherGrade+" \u00B7 "+sections.join(", "))]));
+
+  var dist = classDistribution(roster);
+  var bars = el("div",{class:"bar-list class-chart"});
+  ["V","A","R","K"].forEach(function(s){
+    bars.appendChild(el("div",{class:"bar-row"},[
+      el("div",{class:"bar-label"},[txt(STYLE_ICON[s]+" "+STYLE_NAMES[s])]),
+      el("div",{class:"bar-track"},[el("div",{class:"bar-fill "+s, style:"width:"+dist[s]+"%"})]),
+      el("div",{class:"bar-pct"},[txt(dist[s]+"%")])
+    ]));
+  });
+  card.appendChild(bars);
+
+  var top1 = Object.keys(dist).sort(function(a,b){return dist[b]-dist[a];})[0];
+  var top2 = Object.keys(dist).sort(function(a,b){return dist[b]-dist[a];})[1];
+  var recoGrid = el("div",{class:"reco-grid"});
+  recoGrid.appendChild(el("div",{class:"reco-card"},[
+    el("h3",{},[txt("Most common: "+STYLE_NAMES[top1])]),
+    el("p",{},[txt(RECS[top1].adult)])
+  ]));
+  recoGrid.appendChild(el("div",{class:"reco-card"},[
+    el("h3",{},[txt("Also common: "+STYLE_NAMES[top2])]),
+    el("p",{},[txt(RECS[top2].adult)])
+  ]));
+  card.appendChild(recoGrid);
+  card.appendChild(el("div",{class:"reco-card",style:"margin-top:14px;"},[
+    el("h3",{},[txt("Whole-class tip")]),
+    el("p",{},[txt("Since your class mixes several learning styles, try presenting new lessons two ways at once \u2014 for example, pair a diagram with a hands-on activity, or read instructions aloud while writing them on the board. This reaches "+STYLE_NAMES[top1]+" and "+STYLE_NAMES[top2]+" learners together without leaving the rest behind.")])
+  ]));
+
+  card.appendChild(el("h3",{style:"margin-top:26px;font-size:14px;color:var(--ink-soft);"},[txt("Roster")]));
+  var rosterList = el("div",{class:"roster"});
+  roster.forEach(function(s){
+    rosterList.appendChild(el("div",{class:"roster-row",onclick:function(){ state.selectedStudent=s; state.screen="studentProfile"; render(); }},[
+      el("div",{},[
+        el("div",{class:"roster-name"},[txt(s.name), s.isNew ? el("span",{class:"new-tag"},[txt("NEW")]) : null]),
+        el("div",{class:"roster-meta"},[txt(s.grade+" \u2014 "+s.section+(s.school?" \u00B7 "+s.school:""))])
+      ]),
+      el("div",{class:"mini-badge "+s.style},[txt(STYLE_NAMES[s.style])])
+    ]));
+  });
+  card.appendChild(rosterList);
+  root.appendChild(card);
+}
+
+/* ---- teacher: student picker ---- */
+function renderStudentPicker(root){
+  root.appendChild(topbar(goHome));
+  var card = el("div",{class:"card"});
+  card.appendChild(el("div",{class:"back-link",onclick:function(){ state.screen="teacherHome"; render(); }},[txt("\u2190 Dashboard")]));
+  card.appendChild(el("div",{class:"forgot-link",style:"float:right;margin-top:-2px;",onclick:function(){ refreshRoster("studentPicker"); }},[txt("\uD83D\uDD04 Refresh")]));
+  card.appendChild(el("h2",{},[txt("Select a "+state.teacherGrade+" student")]));
+  card.appendChild(el("p",{},[txt("Pick a name to view their predicted learning style and recommendations.")]));
+  var gRoster = gradeRoster();
+  var rosterList = el("div",{class:"roster",style:"margin-top:18px;"});
+  gRoster.forEach(function(s){
+    rosterList.appendChild(el("div",{class:"roster-row",onclick:function(){ state.selectedStudent=s; state.screen="studentProfile"; render(); }},[
+      el("div",{},[
+        el("div",{class:"roster-name"},[txt(s.name), s.isNew ? el("span",{class:"new-tag"},[txt("NEW")]) : null]),
+        el("div",{class:"roster-meta"},[txt(s.grade+" \u2014 "+s.section+(s.school?" \u00B7 "+s.school:""))])
+      ]),
+      el("div",{class:"mini-badge "+s.style},[txt(STYLE_NAMES[s.style])])
+    ]));
+  });
+  card.appendChild(rosterList);
+  root.appendChild(card);
+}
+
+/* ---- teacher: student profile ---- */
+function renderStudentProfile(root){
+  root.appendChild(topbar(goHome));
+  var s = state.selectedStudent;
+  var card = el("div",{class:"card"});
+  card.appendChild(el("div",{class:"back-link",onclick:function(){ state.screen="teacherHome"; render(); }},[txt("\u2190 Dashboard")]));
+  card.appendChild(el("div",{class:"profile-head"},[
+    el("div",{},[
+      el("h2",{},[txt(s.name)]),
+      el("div",{class:"profile-meta"},[txt(s.grade+" \u2014 "+s.section+(s.school?" \u00B7 "+s.school:""))])
+    ]),
+    el("div",{class:"style-badge "+s.style},[txt(STYLE_ICON[s.style]+" "+STYLE_NAMES[s.style]+" learner")])
+  ]));
+  card.appendChild(el("div",{class:"confidence",style:"margin-top:10px;"},[txt("CONFIDENCE: "+s.conf+"%")]));
+
+  var recoGrid = el("div",{class:"reco-grid"});
+  recoGrid.appendChild(el("div",{class:"reco-card"},[
+    el("h3",{},[txt("Teaching recommendation")]),
+    el("p",{},[txt(RECS[s.style].adult)])
+  ]));
+  recoGrid.appendChild(el("div",{class:"reco-card"},[
+    el("h3",{},[txt("How "+s.name.split(" ")[0]+" experiences it")]),
+    el("p",{},[txt(RECS[s.style].kid)])
+  ]));
+  card.appendChild(recoGrid);
+  root.appendChild(card);
+}
+
+render();
+</script>
+</body>
+</html>
