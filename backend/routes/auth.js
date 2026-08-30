@@ -16,29 +16,31 @@ router.post('/signup/teacher', async (req, res) => {
   if (!name || !email || !password || !school || !grade) {
     return res.status(400).json({ error: 'Please fill in every field.' });
   }
-  const client = await pool.connect();
   try {
-    await client.query('BEGIN');
     const hash = await bcrypt.hash(password, 10);
-    const userRes = await client.query(
-      `insert into users (email, password_hash, role) values ($1,$2,'teacher') returning id`,
-      [email.toLowerCase(), hash]
+    // Single statement (CTE) instead of a separate BEGIN/INSERT/INSERT/COMMIT:
+    // some pooled connections (e.g. PgBouncer in transaction mode) don't
+    // reliably keep multiple round-trip statements pinned to one session,
+    // which can make the second insert fail to see the first. A single
+    // statement has no such risk since it's one round trip either way.
+    const result = await pool.query(
+      `with new_user as (
+         insert into users (email, password_hash, role)
+         values ($1,$2,'teacher')
+         returning id
+       )
+       insert into teacher_profiles (id, name, school, grade)
+       select id, $3, $4, $5 from new_user
+       returning id`,
+      [email.toLowerCase(), hash, name, school, grade]
     );
-    const id = userRes.rows[0].id;
-    await client.query(
-      `insert into teacher_profiles (id, name, school, grade) values ($1,$2,$3,$4)`,
-      [id, name, school, grade]
-    );
-    await client.query('COMMIT');
+    const id = result.rows[0].id;
     const token = signToken({ id, role: 'teacher' });
     res.json({ token, profile: { id, name, school, grade } });
   } catch (err) {
-    await client.query('ROLLBACK');
     if (err.code === '23505') return res.status(409).json({ error: 'An account with that email already exists.' });
     console.error(err);
     res.status(500).json({ error: 'Something went wrong creating your account.' });
-  } finally {
-    client.release();
   }
 });
 
@@ -48,29 +50,26 @@ router.post('/signup/student', async (req, res) => {
   if (!name || !email || !password || !school || !age || !grade || !section) {
     return res.status(400).json({ error: 'Please fill in every field.' });
   }
-  const client = await pool.connect();
   try {
-    await client.query('BEGIN');
     const hash = await bcrypt.hash(password, 10);
-    const userRes = await client.query(
-      `insert into users (email, password_hash, role) values ($1,$2,'student') returning id`,
-      [email.toLowerCase(), hash]
+    const result = await pool.query(
+      `with new_user as (
+         insert into users (email, password_hash, role)
+         values ($1,$2,'student')
+         returning id
+       )
+       insert into students (id, name, age, school, grade, section)
+       select id, $3, $4, $5, $6, $7 from new_user
+       returning id`,
+      [email.toLowerCase(), hash, name, age, school, grade, section]
     );
-    const id = userRes.rows[0].id;
-    await client.query(
-      `insert into students (id, name, age, school, grade, section) values ($1,$2,$3,$4,$5,$6)`,
-      [id, name, age, school, grade, section]
-    );
-    await client.query('COMMIT');
+    const id = result.rows[0].id;
     const token = signToken({ id, role: 'student' });
     res.json({ token, profile: { id, name, age, school, grade, section, style: null } });
   } catch (err) {
-    await client.query('ROLLBACK');
     if (err.code === '23505') return res.status(409).json({ error: 'An account with that email already exists.' });
     console.error(err);
     res.status(500).json({ error: 'Something went wrong creating your account.' });
-  } finally {
-    client.release();
   }
 });
 
