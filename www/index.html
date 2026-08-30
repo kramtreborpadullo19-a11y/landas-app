@@ -253,6 +253,21 @@
   .forgot-link{text-align:center;margin-top:-6px;margin-bottom:16px;font-family:var(--font-mono);font-size:12px;color:var(--visual-deep);cursor:pointer;text-decoration:underline;}
   .forgot-link:hover{color:var(--visual);}
   .reset-note{background:var(--readwrite-soft);border-radius:var(--radius-md);padding:14px 16px;font-size:13.5px;color:var(--ink);margin-top:14px;}
+
+  /* ---------- quiz: themed background per question ---------- */
+  @keyframes cardSlideIn{0%{transform:translateY(14px) scale(.98);opacity:0;}100%{transform:translateY(0) scale(1);opacity:1;}}
+  @keyframes iconPop{0%{transform:scale(0) rotate(-15deg);}70%{transform:scale(1.15) rotate(6deg);}100%{transform:scale(1) rotate(0deg);}}
+  .q-card{position:relative;overflow:hidden;animation:cardSlideIn .32s cubic-bezier(.2,.8,.3,1);transition:background .25s ease;}
+  .q-card.theme-visual{background:linear-gradient(165deg,var(--visual-soft),var(--card) 65%);}
+  .q-card.theme-auditory{background:linear-gradient(165deg,var(--auditory-soft),var(--card) 65%);}
+  .q-card.theme-readwrite{background:linear-gradient(165deg,var(--readwrite-soft),var(--card) 65%);}
+  .q-card.theme-kinesthetic{background:linear-gradient(165deg,var(--kinesthetic-soft),var(--card) 65%);}
+  .q-topic-icon{font-size:34px;display:inline-flex;align-items:center;justify-content:center;width:56px;height:56px;border-radius:16px;background:rgba(255,255,255,.6);margin-bottom:14px;animation:iconPop .4s cubic-bezier(.3,1.5,.5,1);}
+  .theme-visual .q-topic-icon{background:var(--card);box-shadow:0 2px 0 var(--visual-soft) inset, 0 0 0 2px var(--visual-soft);}
+  .theme-auditory .q-topic-icon{background:var(--card);box-shadow:0 2px 0 var(--auditory-soft) inset, 0 0 0 2px var(--auditory-soft);}
+  .theme-readwrite .q-topic-icon{background:var(--card);box-shadow:0 2px 0 var(--readwrite-soft) inset, 0 0 0 2px var(--readwrite-soft);}
+  .theme-kinesthetic .q-topic-icon{background:var(--card);box-shadow:0 2px 0 var(--kinesthetic-soft) inset, 0 0 0 2px var(--kinesthetic-soft);}
+  @media (max-width:560px){.q-topic-icon{width:46px;height:46px;font-size:26px;border-radius:13px;}}
 </style>
 </head>
 <body>
@@ -296,52 +311,52 @@ var STYLE_NAMES = {V:"Visual", A:"Auditory", R:"Read/Write", K:"Kinesthetic"};
 var STYLE_ICON = {V:"\uD83D\uDC40", A:"\uD83D\uDC42", R:"\uD83D\uDCD6", K:"\u270B"};
 
 var QUESTIONS = [
-  {p:"When learning from the Internet I like:",
+  {icon:"\uD83C\uDF10", theme:"visual", p:"When learning from the Internet I like:",
    o:[["R","Detailed articles"],["K","Videos showing how to do things"],
       ["A","Podcasts and videos where I can listen to experts"],["V","Interesting design and visual features"]]},
-  {p:"I want to find out about some accommodation. Before visiting, I would want:",
+  {icon:"\uD83C\uDFE0", theme:"auditory", p:"I want to find out about some accommodation. Before visiting, I would want:",
    o:[["R","A printed description of the rooms and features"],["A","A discussion with the owner or manager"],
       ["V","A plan showing the rooms and a map of the area"],["K","To view a video of the property"]]},
-  {p:"When I am learning I:",
+  {icon:"\uD83D\uDCDA", theme:"readwrite", p:"When I am learning I:",
    o:[["R","Read books, articles and handouts"],["K","Use examples and applications"],
       ["A","Like to talk things through"],["V","See patterns in things"]]},
-  {p:"I want to learn to do something new on a computer. I would:",
+  {icon:"\uD83D\uDCBB", theme:"kinesthetic", p:"I want to learn to do something new on a computer. I would:",
    o:[["R","Read the written instructions that came with the program"],["A","Talk with people who know about the program"],
       ["K","Start using it and learn by trial and error"],["V","Follow the diagrams in a book"]]},
-  {p:"I want to learn how to play a new board game or card game. I would:",
+  {icon:"\uD83C\uDFB2", theme:"visual", p:"I want to learn how to play a new board game or card game. I would:",
    o:[["A","Listen to somebody explaining it and ask questions"],["R","Read the instructions"],
       ["K","Watch others play the game before joining in"],["V","Use the diagrams that explain the stages, moves, and strategies"]]},
-  {p:"I want to be sure I am doing my exercises correctly. I would:",
+  {icon:"\uD83E\uDD38", theme:"auditory", p:"I want to be sure I am doing my exercises correctly. I would:",
    o:[["A","Listen to an explanation about how the exercises should be done"],["K","Compare what I am doing with a video demonstration"],
       ["V","Study diagrams illustrating the way the exercises should be done"],["R","Check a list of important aspects of the exercises to get right"]]},
-  {p:"I want to save more money and decide between a range of options. I would:",
+  {icon:"\uD83D\uDCB0", theme:"readwrite", p:"I want to save more money and decide between a range of options. I would:",
    o:[["V","Use graphs showing different options for different time periods"],["A","Talk with an expert about the options"],
       ["K","Consider examples of each option using my own information"],["R","Read a print brochure that describes the options in detail"]]},
-  {p:"I want to learn how to take better photos. I would:",
+  {icon:"\uD83D\uDCF7", theme:"kinesthetic", p:"I want to learn how to take better photos. I would:",
    o:[["K","Use examples of good and poor photos showing how to improve them"],["V","Use diagrams showing the camera and what each part does"],
       ["A","Ask questions and talk about the camera and its features"],["R","Use the written instructions about what to do"]]},
-  {p:"A website has a video showing how to make a special graph or chart, with a person speaking, some lists and words, and some diagrams. I would learn most from:",
+  {icon:"\uD83D\uDCCA", theme:"visual", p:"A website has a video showing how to make a special graph or chart, with a person speaking, some lists and words, and some diagrams. I would learn most from:",
    o:[["R","Reading the words"],["K","Watching the actions"],
       ["A","Listening"],["V","Seeing the diagrams"]]},
-  {p:"I want to find out more about a tour that I am going on. I would:",
+  {icon:"\uD83D\uDDFA\uFE0F", theme:"auditory", p:"I want to find out more about a tour that I am going on. I would:",
    o:[["K","Look at details about the highlights and activities on the tour"],["R","Read about the tour on the itinerary"],
       ["A","Talk with the person who planned the tour, or others who are going"],["V","Use a map and see where the places are"]]},
-  {p:"I have finished a competition or test and I would like some feedback:",
+  {icon:"\uD83C\uDFC6", theme:"readwrite", p:"I have finished a competition or test and I would like some feedback:",
    o:[["R","Using a written description of my results"],["V","Using graphs showing how my performance has improved"],
       ["A","From somebody who talks it through with me"],["K","Using examples from what I have done"]]},
-  {p:"I prefer a presenter or a teacher who uses:",
+  {icon:"\uD83C\uDFA4", theme:"kinesthetic", p:"I prefer a presenter or a teacher who uses:",
    o:[["V","Diagrams, charts, maps, or graphs"],["A","Question and answer, talk, group discussion, or guest speakers"],
       ["R","Handouts, books, or readings"],["K","Demonstrations, models, or practical sessions"]]},
-  {p:"I am making a history of the area where I live. I would:",
+  {icon:"\uD83C\uDFDB\uFE0F", theme:"visual", p:"I am making a history of the area where I live. I would:",
    o:[["V","Gather old maps and charts"],["K","Compare historical photos of the area with what is there now"],
       ["A","Record stories from people talking about old times"],["R","Read articles and other information in old newspapers and documents"]]},
-  {p:"I want to learn about a new project. I would ask for:",
+  {icon:"\uD83D\uDCCB", theme:"auditory", p:"I want to learn about a new project. I would ask for:",
    o:[["A","An opportunity to discuss the project"],["R","A written report describing the main features of the project"],
       ["V","Diagrams to show the project stages with charts of benefits and costs"],["K","Examples where the project has been used successfully"]]},
-  {p:"I am having trouble assembling something that came in parts. I would:",
+  {icon:"\uD83E\uDE91", theme:"readwrite", p:"I am having trouble assembling something that came in parts. I would:",
    o:[["A","Ask for advice or help from someone else"],["R","Go through the step-by-step written instructions again"],
       ["V","Go through the step-by-step diagrams again"],["K","Try arranging the parts to see how they fit together"]]},
-  {p:"When choosing a career or area of study, these are important for me:",
+  {icon:"\uD83C\uDF93", theme:"kinesthetic", p:"When choosing a career or area of study, these are important for me:",
    o:[["R","Using words well in written communications"],["A","Communicating with others through discussion"],
       ["V","Working with designs, maps, or charts"],["K","Applying my knowledge in real situations"]]}
 ];
@@ -873,7 +888,9 @@ function renderQuizScreen(root){
   root.appendChild(mascot(CHEERS[state.qIndex] || "You're doing great!"));
   root.appendChild(trail(2, 0, {current: state.qIndex, total: QUESTIONS.length}));
   var q = QUESTIONS[state.qIndex];
-  var card = el("div",{class:"card"});
+  var theme = q.theme || "visual";
+  var card = el("div",{class:"card q-card theme-"+theme, key:state.qIndex});
+  card.appendChild(el("div",{class:"q-topic-icon"},[txt(q.icon || "\u2728")]));
   card.appendChild(el("div",{class:"q-count"},[txt("QUESTION "+(state.qIndex+1)+" OF "+QUESTIONS.length)]));
   card.appendChild(el("div",{class:"q-prompt"},[txt(q.p)]));
 
