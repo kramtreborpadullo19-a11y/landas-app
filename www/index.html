@@ -228,6 +228,8 @@
   /* ---------- child-friendly / interactive ---------- */
   @keyframes wiggle{0%,100%{transform:rotate(0deg);}25%{transform:rotate(-6deg);}75%{transform:rotate(6deg);}}
   @keyframes popIn{0%{transform:scale(.85);opacity:0;}100%{transform:scale(1);opacity:1;}}
+  @keyframes optBounce{0%{transform:scale(1);}35%{transform:scale(1.06);}60%{transform:scale(.98);}100%{transform:scale(1);}}
+  @keyframes checkPop{0%{transform:scale(0) rotate(-20deg);}60%{transform:scale(1.25) rotate(8deg);}100%{transform:scale(1) rotate(0deg);}}
   @keyframes floaty{0%,100%{transform:translateY(0);}50%{transform:translateY(-5px);}}
   @keyframes confettiFall{0%{transform:translateY(-10px) rotate(0deg);opacity:1;}100%{transform:translateY(70px) rotate(280deg);opacity:0;}}
 
@@ -241,7 +243,9 @@
   .btn-primary:hover{transform:translateY(-1px);}
   .opt{transition:transform .12s ease, border-color .12s ease, background .12s ease;}
   .opt:hover{transform:translateY(-2px) scale(1.01);}
-  .opt.selected{animation:popIn .2s ease;}
+  .opt.selected{animation:optBounce .32s ease;}
+  .opt-check{display:none;margin-left:auto;font-size:18px;flex-shrink:0;}
+  .opt.selected .opt-check{display:inline-block;animation:checkPop .35s cubic-bezier(.3,1.6,.5,1);}
   .stop-dot{cursor:default;}
   .stop.active .stop-dot{animation:floaty 1.6s ease-in-out infinite;}
 
@@ -904,7 +908,8 @@ function renderQuizScreen(root){
       render();
     }},[
       el("div",{class:"icon"},[txt(STYLE_ICON[style])]),
-      el("span",{class:"txt"},[txt(label)])
+      el("span",{class:"txt"},[txt(label)]),
+      el("span",{class:"opt-check"},[txt("\u2705")])
     ]);
     grid.appendChild(optEl);
   });
