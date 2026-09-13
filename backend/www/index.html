@@ -228,6 +228,12 @@
   .section-tab:hover{transform:translateY(-2px);}
   .section-tab.active{background:var(--ink);color:#fff;border-color:var(--ink);}
   .section-group-title{font-size:14px;color:var(--ink-soft);margin:22px 0 8px;font-weight:600;}
+  .section-breakdown-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:12px;}
+  @media (max-width:620px){.section-breakdown-grid{grid-template-columns:1fr;}}
+  .section-mini-card{background:var(--paper-alt);border-radius:var(--radius-md);padding:16px 18px;}
+  .section-mini-card h3{font-size:13.5px;color:var(--ink);margin-bottom:10px;}
+  .bar-row.sm{grid-template-columns:90px 1fr 36px;gap:8px;}
+  .bar-track.sm{height:7px;}
 
   .save-note{margin-top:20px;font-family:var(--font-mono);font-size:11.5px;color:var(--readwrite-deep);display:flex;align-items:center;gap:7px;}
 
@@ -1323,6 +1329,32 @@ function renderClassDash(root){
     ]));
   });
   card.appendChild(bars);
+
+  if(!state.classDashSection && sections.length > 1){
+    /* "All sections" view: also break the distribution down per section,
+       since the combined chart above blends sections together and hides
+       differences between them. */
+    var breakdownGrid = el("div",{class:"section-breakdown-grid"});
+    sections.forEach(function(sec){
+      var secRoster = roster.filter(function(s){ return s.section === sec; });
+      if(!secRoster.length) return;
+      var secDist = classDistribution(secRoster);
+      var miniCard = el("div",{class:"section-mini-card"});
+      miniCard.appendChild(el("h3",{},[txt(sec+" ("+secRoster.length+")")]));
+      var miniBars = el("div",{class:"bar-list"});
+      ["V","A","R","K"].forEach(function(s){
+        miniBars.appendChild(el("div",{class:"bar-row sm"},[
+          el("div",{class:"bar-label"},[txt(STYLE_ICON[s]+" "+STYLE_NAMES[s])]),
+          el("div",{class:"bar-track sm"},[el("div",{class:"bar-fill "+s, style:"width:"+secDist[s]+"%"})]),
+          el("div",{class:"bar-pct"},[txt(secDist[s]+"%")])
+        ]));
+      });
+      miniCard.appendChild(miniBars);
+      breakdownGrid.appendChild(miniCard);
+    });
+    card.appendChild(el("h3",{style:"margin-top:22px;font-size:14px;color:var(--ink-soft);"},[txt("By section")]));
+    card.appendChild(breakdownGrid);
+  }
 
   var top1 = Object.keys(dist).sort(function(a,b){return dist[b]-dist[a];})[0];
   var top2 = Object.keys(dist).sort(function(a,b){return dist[b]-dist[a];})[1];
