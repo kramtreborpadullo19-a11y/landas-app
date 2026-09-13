@@ -37,11 +37,22 @@
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
   html{height:100%;overscroll-behavior-y:none;}
-  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--font-body);min-height:100%;
+  body{margin:0;
+       background:
+         radial-gradient(ellipse 700px 500px at 8% 8%, rgba(91,79,233,0.09) 0%, rgba(91,79,233,0.03) 40%, transparent 70%),
+         radial-gradient(ellipse 650px 500px at 95% 15%, rgba(240,96,60,0.08) 0%, rgba(240,96,60,0.03) 40%, transparent 70%),
+         radial-gradient(ellipse 700px 550px at 12% 92%, rgba(15,160,127,0.09) 0%, rgba(15,160,127,0.03) 40%, transparent 70%),
+         radial-gradient(ellipse 650px 500px at 92% 90%, rgba(230,164,23,0.09) 0%, rgba(230,164,23,0.03) 40%, transparent 70%),
+         #F5F8F3;
+       color:var(--ink);font-family:var(--font-body);min-height:100%;
        padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom);
        -webkit-user-select:none;user-select:none;}
   input, textarea{-webkit-user-select:text;user-select:text;}
-  #app{max-width:960px;margin:0 auto;padding:28px 20px 60px;}
+  #app{max-width:1180px;margin:0 auto;padding:28px 28px 60px;position:relative;z-index:1;}
+  .bg-decor{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:0;}
+  .bg-shape{position:absolute;font-size:38px;opacity:.4;animation:bgFloat 10s ease-in-out infinite;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.05));}
+  @keyframes bgFloat{0%,100%{transform:translateY(0) rotate(0deg);}50%{transform:translateY(-26px) rotate(8deg);}}
+  @media (max-width:1000px){.bg-decor{display:none;}}
 
   .eyebrow{font-family:var(--font-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint);}
   h1,h2,h3{font-family:var(--font-display);margin:0;line-height:1.15;}
@@ -51,10 +62,13 @@
   .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:26px;flex-wrap:wrap;gap:10px;}
   .topbar-left{display:flex;align-items:center;gap:12px;}
   .hamburger-btn{width:38px;height:38px;border-radius:11px;background:var(--card);border:1px solid var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer;flex:none;}
-  .hamburger-btn:hover{border-color:var(--line-strong);}
+  .hamburger-btn:hover{border-color:var(--line-strong);transform:scale(1.08) rotate(-4deg);}
+  .hamburger-btn{transition:transform .15s cubic-bezier(.3,1.6,.5,1), border-color .15s ease;}
+  .hamburger-btn:active{transform:scale(.9);}
   .hamburger-btn span{display:block;width:16px;height:2px;background:var(--ink-soft);border-radius:2px;}
   .brand{display:flex;align-items:center;gap:10px;}
-  .brand-mark{width:38px;height:38px;border-radius:11px;background:linear-gradient(155deg,var(--readwrite),var(--visual));position:relative;flex:none;}
+  .brand-mark{width:38px;height:38px;border-radius:11px;background:linear-gradient(155deg,var(--readwrite),var(--visual));position:relative;flex:none;transition:transform .35s cubic-bezier(.3,1.4,.5,1);}
+  .brand:hover .brand-mark{transform:rotate(14deg) scale(1.08);}
   .brand-mark svg{position:absolute;inset:0;margin:auto;}
   .brand-name{font-family:var(--font-display);font-weight:700;font-size:19px;}
   .brand-sub{font-family:var(--font-mono);font-size:10.5px;color:var(--ink-faint);letter-spacing:.04em;margin-top:1px;}
@@ -75,7 +89,8 @@
   .drawer-section-title:first-child{margin-top:0;}
   .drawer-item{display:flex;align-items:flex-start;gap:12px;padding:11px 10px;border-radius:var(--radius-sm);cursor:pointer;}
   .drawer-item:hover{background:var(--paper-alt);}
-  .drawer-item .di-icon{font-size:19px;flex:none;margin-top:1px;}
+  .drawer-item .di-icon{font-size:19px;flex:none;margin-top:1px;transition:transform .15s ease;}
+  .drawer-item:hover .di-icon{animation:wiggle .45s ease;transform:scale(1.15);}
   .drawer-item .di-text b{display:block;font-size:13.5px;color:var(--ink);font-weight:600;}
   .drawer-item .di-text span{display:block;font-size:12px;color:var(--ink-soft);margin-top:2px;line-height:1.4;}
   .drawer-howto{background:var(--visual-soft);border-radius:var(--radius-md);padding:14px 15px;margin-top:4px;}
@@ -98,7 +113,7 @@
   .subdot.on{background:var(--visual);}
 
   /* ---------- cards ---------- */
-  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius-lg);padding:28px;}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius-lg);padding:28px;box-shadow:0 8px 28px rgba(24,38,32,0.06);}
   .card + .card{margin-top:16px;}
 
   /* ---------- start screen ---------- */
@@ -108,7 +123,8 @@
   .role-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:26px;}
   @media (max-width:620px){.role-grid{grid-template-columns:1fr;}}
   .role-card{border-radius:var(--radius-lg);padding:26px 22px;text-align:left;cursor:pointer;border:2px solid transparent;transition:transform .15s ease, border-color .15s ease;}
-  .role-card:hover{transform:translateY(-3px);}
+  .role-card:hover{transform:translateY(-5px) rotate(-1deg);}
+  .role-card:hover .role-icon{animation:wiggle .5s ease;}
   .role-card.student{background:var(--visual-soft);}
   .role-card.student:hover{border-color:var(--visual);}
   .role-card.teacher{background:var(--kinesthetic-soft);}
@@ -126,7 +142,9 @@
 
   /* ---------- buttons ---------- */
   .btn{font-family:var(--font-body);font-weight:600;font-size:14px;border-radius:999px;border:none;cursor:pointer;padding:12px 24px;transition:transform .12s ease, opacity .12s ease;}
-  .btn:active{transform:scale(.97);}
+  .btn:active{transform:scale(.9) rotate(-2deg);transition:transform .1s cubic-bezier(.3,1.6,.5,1);}
+  .btn{transition:transform .16s cubic-bezier(.3,1.6,.5,1), opacity .12s ease, box-shadow .16s ease;}
+  .btn-primary:hover{box-shadow:0 4px 14px rgba(24,38,32,0.18);}
   .btn-primary{background:var(--ink);color:#fff;}
   .btn-primary:disabled{opacity:.35;cursor:not-allowed;}
   .btn-ghost{background:transparent;color:var(--ink-soft);border:1px solid var(--line-strong);}
@@ -148,9 +166,9 @@
   .q-prompt{font-family:var(--font-display);font-size:22px;font-weight:600;margin-bottom:20px;}
   .opt-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
   @media (max-width:560px){.opt-grid{grid-template-columns:1fr;}}
-  .opt{display:flex;align-items:flex-start;gap:12px;padding:16px;border-radius:var(--radius-md);border:2px solid var(--line);background:var(--paper-alt);cursor:pointer;text-align:left;font-family:var(--font-body);}
+  .opt{display:flex;align-items:center;gap:14px;padding:20px 18px;border-radius:var(--radius-md);border:2px solid var(--line);background:var(--paper-alt);cursor:pointer;text-align:left;font-family:var(--font-body);min-height:64px;}
   .opt:hover{border-color:var(--line-strong);}
-  .opt .icon{font-size:22px;flex:none;}
+  .opt .icon{font-size:28px;flex:none;}
   .opt.selected{border-color:var(--ink);background:var(--card);}
   .opt.style-V.selected{border-color:var(--visual);background:var(--visual-soft);}
   .opt.style-A.selected{border-color:var(--auditory);background:var(--auditory-soft);}
@@ -188,26 +206,57 @@
   .reco-card h3{font-size:13px;font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.05em;color:var(--ink-faint);margin-bottom:8px;}
   .reco-card p{font-size:14px;color:var(--ink);margin:0;}
 
+  /* ---------- student dashboard ---------- */
+  .dash-hero{display:flex;align-items:center;gap:20px;flex-wrap:wrap;}
+  .dash-avatar{width:88px;height:88px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:42px;flex:none;animation:floaty 3s ease-in-out infinite;box-shadow:0 4px 0 rgba(0,0,0,0.04);}
+  .dash-avatar.V{background:var(--visual-soft);} .dash-avatar.A{background:var(--auditory-soft);}
+  .dash-avatar.R{background:var(--readwrite-soft);} .dash-avatar.K{background:var(--kinesthetic-soft);}
+  .dash-hero-text h2{font-size:22px;margin-bottom:6px;}
+  .dash-blurb{font-size:13.5px;color:var(--ink-soft);max-width:420px;}
+  .dash-conf-row{margin-top:18px;}
+  .dash-conf-label{display:flex;justify-content:space-between;font-family:var(--font-mono);font-size:11px;color:var(--ink-faint);margin-bottom:6px;}
+  .info-strip{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px;}
+  .info-chip{background:var(--paper-alt);padding:8px 14px;border-radius:999px;font-family:var(--font-mono);font-size:11.5px;color:var(--ink-soft);display:inline-flex;gap:6px;align-items:center;transition:transform .15s ease;}
+  .info-chip:hover{transform:translateY(-2px) scale(1.03);}
+  .tip-card{margin-top:16px;}
+  .tip-item{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px dashed var(--line);}
+  .tip-item:last-child{border-bottom:none;}
+  .tip-item .tip-icon{font-size:18px;flex:none;}
+  .tip-item span{font-size:13.5px;color:var(--ink);}
+  .section-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 20px;}
+  .section-tab{font-family:var(--font-mono);font-size:11.5px;padding:7px 14px;border-radius:999px;border:1.5px solid var(--line-strong);background:var(--card);color:var(--ink-soft);cursor:pointer;transition:transform .12s ease, background .15s ease, color .15s ease;}
+  .section-tab:hover{transform:translateY(-2px);}
+  .section-tab.active{background:var(--ink);color:#fff;border-color:var(--ink);}
+  .section-group-title{font-size:14px;color:var(--ink-soft);margin:22px 0 8px;font-weight:600;}
+
   .save-note{margin-top:20px;font-family:var(--font-mono);font-size:11.5px;color:var(--readwrite-deep);display:flex;align-items:center;gap:7px;}
 
   /* ---------- login / signup (shared by teachers & students) ---------- */
   .login-wrap{max-width:380px;margin:20px auto 0;}
-  .login-icon{font-size:34px;text-align:center;display:block;margin-bottom:6px;}
+  .login-icon{font-size:34px;text-align:center;display:block;margin-bottom:6px;cursor:pointer;transition:transform .15s ease;}
+  .login-icon:hover{animation:wiggle .5s ease;}
+  .login-icon:active{transform:scale(.85) rotate(-10deg);}
 
   /* ---------- teacher dashboard ---------- */
   .dash-head{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;margin-bottom:18px;}
   .option-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
   @media (max-width:620px){.option-grid{grid-template-columns:1fr;}}
   .option-card{border-radius:var(--radius-lg);padding:22px;cursor:pointer;border:2px solid var(--line);background:var(--paper-alt);}
-  .option-card:hover{border-color:var(--line-strong);}
-  .option-card .icon{font-size:26px;}
+  .option-card:hover{border-color:var(--line-strong);transform:translateY(-4px) rotate(1deg);}
+  .option-card{transition:transform .18s cubic-bezier(.3,1.4,.5,1), border-color .15s ease;}
+  .option-card .icon{font-size:26px;display:inline-block;}
+  .option-card:hover .icon{animation:wiggle .5s ease;}
   .option-card h3{font-size:17px;margin-top:8px;}
   .option-card p{font-size:13px;margin-top:5px;}
 
   .class-chart{margin-top:10px;}
   .roster{margin-top:22px;display:flex;flex-direction:column;gap:8px;}
   .roster-row{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-radius:var(--radius-sm);border:1px solid var(--line);cursor:pointer;background:var(--card);}
-  .roster-row:hover{border-color:var(--line-strong);background:var(--paper-alt);}
+  .roster-row:hover{border-color:var(--line-strong);background:var(--paper-alt);transform:translateX(4px) scale(1.01);}
+  .roster-row{transition:transform .15s cubic-bezier(.3,1.4,.5,1), border-color .15s ease, background .15s ease;}
+  .roster-row:active{transform:scale(.98);}
+  .mini-badge{transition:transform .15s ease;}
+  .roster-row:hover .mini-badge{transform:scale(1.08) rotate(-3deg);}
   .roster-name{font-size:14px;font-weight:600;}
   .roster-meta{font-family:var(--font-mono);font-size:11px;color:var(--ink-faint);}
   .mini-badge{font-family:var(--font-mono);font-size:11px;font-weight:600;padding:4px 10px;border-radius:999px;}
@@ -234,8 +283,12 @@
   @keyframes confettiFall{0%{transform:translateY(-10px) rotate(0deg);opacity:1;}100%{transform:translateY(70px) rotate(280deg);opacity:0;}}
 
   .mascot-row{display:flex;align-items:center;gap:12px;margin-bottom:14px;animation:popIn .35s ease;}
-  .mascot-face{font-size:38px;flex:none;animation:floaty 2.6s ease-in-out infinite;cursor:default;}
+  .mascot-face{font-size:38px;flex:none;animation:floaty 2.6s ease-in-out infinite;cursor:pointer;}
   .mascot-face:hover{animation:wiggle .5s ease;}
+  .mascot-face.tapped{animation:mascotBounce .55s cubic-bezier(.3,1.8,.4,1);}
+  @keyframes mascotBounce{0%{transform:scale(1) rotate(0deg);}25%{transform:scale(1.3) rotate(-14deg);}50%{transform:scale(.9) rotate(10deg);}75%{transform:scale(1.15) rotate(-6deg);}100%{transform:scale(1) rotate(0deg);}}
+  .mascot-bubble{transition:transform .15s cubic-bezier(.3,1.6,.5,1);}
+  .mascot-bubble.pulse{animation:optBounce .3s ease;}
   .mascot-bubble{background:var(--card);border:2px solid var(--line-strong);border-radius:var(--radius-md);padding:10px 14px;font-family:var(--font-body);font-size:13.5px;color:var(--ink);position:relative;}
 
   .role-card{animation:popIn .3s ease;}
@@ -243,6 +296,8 @@
   .btn-primary:hover{transform:translateY(-1px);}
   .opt{transition:transform .12s ease, border-color .12s ease, background .12s ease;}
   .opt:hover{transform:translateY(-2px) scale(1.01);}
+  .opt:hover .icon{animation:wiggle .4s ease;}
+  .opt:active{transform:scale(.97);}
   .opt.selected{animation:optBounce .32s ease;}
   .opt-check{display:none;margin-left:auto;font-size:18px;flex-shrink:0;}
   .opt.selected .opt-check{display:inline-block;animation:checkPop .35s cubic-bezier(.3,1.6,.5,1);}
@@ -266,7 +321,7 @@
   .q-card.theme-auditory{background:linear-gradient(165deg,var(--auditory-soft),var(--card) 65%);}
   .q-card.theme-readwrite{background:linear-gradient(165deg,var(--readwrite-soft),var(--card) 65%);}
   .q-card.theme-kinesthetic{background:linear-gradient(165deg,var(--kinesthetic-soft),var(--card) 65%);}
-  .q-topic-icon{font-size:34px;display:inline-flex;align-items:center;justify-content:center;width:56px;height:56px;border-radius:16px;background:rgba(255,255,255,.6);margin-bottom:14px;animation:iconPop .4s cubic-bezier(.3,1.5,.5,1);}
+  .q-topic-icon{font-size:42px;display:inline-flex;align-items:center;justify-content:center;width:68px;height:68px;border-radius:18px;background:rgba(255,255,255,.6);margin-bottom:14px;animation:iconPop .4s cubic-bezier(.3,1.5,.5,1);}
   .theme-visual .q-topic-icon{background:var(--card);box-shadow:0 2px 0 var(--visual-soft) inset, 0 0 0 2px var(--visual-soft);}
   .theme-auditory .q-topic-icon{background:var(--card);box-shadow:0 2px 0 var(--auditory-soft) inset, 0 0 0 2px var(--auditory-soft);}
   .theme-readwrite .q-topic-icon{background:var(--card);box-shadow:0 2px 0 var(--readwrite-soft) inset, 0 0 0 2px var(--readwrite-soft);}
@@ -376,7 +431,21 @@ var RECS = {
      adult:"Use manipulatives, role-play, hands-on experiments, and movement breaks. Let the child act out ideas."}
 };
 
-var GRADES = ["Grade 1","Grade 2","Grade 3","Grade 4","Grade 5","Grade 6"];
+var STYLE_THEME = {V:"visual", A:"auditory", R:"readwrite", K:"kinesthetic"};
+var STYLE_BLURB = {
+  V:"You take in new ideas best through pictures, colors, and diagrams \u2014 your eyes do a lot of the learning!",
+  A:"You take in new ideas best through listening and talking \u2014 your ears and voice do a lot of the learning!",
+  R:"You take in new ideas best through words \u2014 reading and writing help things stick.",
+  K:"You take in new ideas best by doing \u2014 your hands and body help you understand."
+};
+var STYLE_TIPS = {
+  V:["Use colors or highlighters when you study","Draw a quick picture or diagram for new ideas","Watch short videos to see things in action"],
+  A:["Say your answers out loud while you study","Turn facts into a song or rhyme","Talk with a friend about what you learned"],
+  R:["Write short notes as you read","Make a word list for new topics","Read a story or article about it"],
+  K:["Build or draw something with your hands","Take a movement break while studying","Act out or role-play what you're learning"]
+};
+
+var GRADES = ["Kinder","Grade 1","Grade 2","Grade 3","Grade 4","Grade 5","Grade 6"];
 
 var SCHOOLS = [
   "Abejao Elementary School",
@@ -419,6 +488,7 @@ var state = {
   currentStudent: null,
   currentUser: null,
   cachedRoster: [],
+  classDashSection: null,
   loadingMessage: "",
   authErrorMsg: "",
   signupSuccess: false,
@@ -427,6 +497,10 @@ var state = {
   resetSent: false,
   drawerOpen: false
 };
+
+function gradeSectionLine(s){
+  return s.grade + (s.section ? " \u2014 "+s.section : "") + (s.school ? " \u00B7 "+s.school : "");
+}
 
 function gradeRoster(){
   return state.cachedRoster || [];
@@ -625,11 +699,17 @@ function topbar(homeAction){
   return bar;
 }
 
+var MASCOT_REACTIONS = ["Hoo-hoo! \uD83C\uDF89","You found my secret wiggle!","Tee-hee, that tickles!","Landi says hi! \uD83D\uDC4B","Keep tapping, I don't mind!","Whee! \u2728"];
 function mascot(msg){
-  return el("div",{class:"mascot-row"},[
-    el("div",{class:"mascot-face"},[txt("\uD83E\uDD89")]),
-    el("div",{class:"mascot-bubble"},[txt(msg)])
-  ]);
+  var bubble = el("div",{class:"mascot-bubble"},[txt(msg)]);
+  var face = el("div",{class:"mascot-face"},[txt("\uD83E\uDD89")]);
+  face.addEventListener("click", function(){
+    face.classList.remove("tapped"); void face.offsetWidth; face.classList.add("tapped");
+    bubble.textContent = MASCOT_REACTIONS[Math.floor(Math.random()*MASCOT_REACTIONS.length)];
+    bubble.classList.remove("pulse"); void bubble.offsetWidth; bubble.classList.add("pulse");
+    setTimeout(function(){ bubble.textContent = msg; }, 1400);
+  });
+  return el("div",{class:"mascot-row"},[face, bubble]);
 }
 
 function trail(activeIndex, doneUpTo, subProgress){
@@ -687,7 +767,7 @@ function goHome(){
   state.screen="start"; state.demo={name:"",age:"",school:"",grade:"",section:""}; state.answers={}; state.qIndex=0; state.result=null;
   state.teacherLoggedIn=false; state.teacherGrade=null; state.teacherSchool=null; state.teacherName=null;
   state.studentLoggedIn=false; state.currentStudent=null; state.currentUser=null;
-  state.cachedRoster=[]; state.resetSent=false; state.authErrorMsg=""; state.signupSuccess=false;
+  state.cachedRoster=[]; state.resetSent=false; state.authErrorMsg=""; state.signupSuccess=false; state.classDashSection=null;
   render();
 }
 
@@ -813,8 +893,8 @@ function renderStudentSignupScreen(root){
   wrap.appendChild(grid);
 
   wrap.appendChild(el("div",{class:"field",style:"max-width:260px;"},[
-    el("label",{},[txt("Section")]),
-    el("input",{type:"text", id:"ssu-section", placeholder:"e.g. Sampaguita"})
+    el("label",{},[txt("Section (optional)")]),
+    el("input",{type:"text", id:"ssu-section", placeholder:"e.g. Sampaguita \u2014 leave blank if none"})
   ]));
 
   if(state.signupSuccess){
@@ -837,7 +917,7 @@ function renderStudentSignupScreen(root){
     var age=document.getElementById("ssu-age").value.trim();
     var grade=document.getElementById("ssu-grade").value;
     var section=document.getElementById("ssu-section").value.trim();
-    if(!first||!middle||!last||!email||!pass||!school||!age||!grade||!section){
+    if(!first||!middle||!last||!email||!pass||!school||!age||!grade){
       state.authErrorMsg="Please fill in every field."; render(); return;
     }
     var name = first+" "+middle+" "+last;
@@ -862,19 +942,48 @@ function renderStudentSignupScreen(root){
 /* ---- student: signed-in home (already has a saved result) ---- */
 function renderStudentHomeScreen(root){
   root.appendChild(topbar(goHome));
-  root.appendChild(mascot("Welcome back, "+(state.currentStudent ? state.currentStudent.name : "friend")+"!"));
+  var student = state.currentStudent || {};
+  var firstName = student.name ? student.name.split(" ")[0] : "friend";
+  root.appendChild(mascot("Welcome back, "+firstName+"! Here's your learning style."));
   var r = state.result;
-  var card = el("div",{class:"card"});
-  card.appendChild(el("div",{class:"eyebrow"},[txt("YOUR SAVED RESULT")]));
-  var row = el("div",{class:"badge-row",style:"margin-top:10px;"});
-  row.appendChild(el("div",{class:"style-badge "+r.style},[txt(STYLE_ICON[r.style]+" "+STYLE_NAMES[r.style]+" learner")]));
-  row.appendChild(el("div",{class:"confidence"},[txt("CONFIDENCE: "+r.confidence+"%")]));
-  card.appendChild(row);
+  var theme = STYLE_THEME[r.style] || "visual";
 
-  card.appendChild(el("div",{class:"reco-card",style:"margin-top:20px;"},[
-    el("h3",{},[txt("For you")]),
-    el("p",{},[txt(RECS[r.style].kid)])
+  var card = el("div",{class:"card q-card theme-"+theme});
+
+  var hero = el("div",{class:"dash-hero"});
+  hero.appendChild(el("div",{class:"dash-avatar "+r.style},[txt(STYLE_ICON[r.style])]));
+  hero.appendChild(el("div",{class:"dash-hero-text"},[
+    el("div",{class:"eyebrow"},[txt("YOUR LEARNING STYLE")]),
+    el("h2",{},[txt(STYLE_NAMES[r.style]+" learner")]),
+    el("p",{class:"dash-blurb"},[txt(STYLE_BLURB[r.style])])
   ]));
+  card.appendChild(hero);
+
+  var confWrap = el("div",{class:"dash-conf-row"});
+  confWrap.appendChild(el("div",{class:"dash-conf-label"},[
+    el("span",{},[txt("CONFIDENCE")]),
+    el("span",{},[txt(r.confidence+"%")])
+  ]));
+  confWrap.appendChild(el("div",{class:"bar-track"},[el("div",{class:"bar-fill "+r.style, style:"width:"+r.confidence+"%"})]));
+  card.appendChild(confWrap);
+
+  var chips = el("div",{class:"info-strip"});
+  if(student.school) chips.appendChild(el("div",{class:"info-chip"},[txt("\uD83C\uDFEB "+student.school)]));
+  if(student.grade) chips.appendChild(el("div",{class:"info-chip"},[txt("\uD83C\uDF93 "+student.grade)]));
+  if(student.section) chips.appendChild(el("div",{class:"info-chip"},[txt("\uD83D\uDC65 "+student.section)]));
+  if(student.age) chips.appendChild(el("div",{class:"info-chip"},[txt("\uD83C\uDF82 Age "+student.age)]));
+  card.appendChild(chips);
+
+  var tipCard = el("div",{class:"reco-card tip-card"});
+  tipCard.appendChild(el("h3",{},[txt("Try these")]));
+  var tipIcons = ["1\uFE0F\u20E3","2\uFE0F\u20E3","3\uFE0F\u20E3"];
+  (STYLE_TIPS[r.style]||[]).forEach(function(tip, i){
+    tipCard.appendChild(el("div",{class:"tip-item"},[
+      el("span",{class:"tip-icon"},[txt(tipIcons[i]||"\u2728")]),
+      el("span",{},[txt(tip)])
+    ]));
+  });
+  card.appendChild(tipCard);
 
   var btnRow = el("div",{class:"btn-row"});
   btnRow.appendChild(el("button",{class:"btn btn-ghost",onclick:goHome},[txt("\uD83D\uDD13 Log out")]));
@@ -903,8 +1012,9 @@ function renderQuizScreen(root){
   q.o.forEach(function(opt){
     var style = opt[0], label = opt[1];
     var cls = "opt style-"+style + (selected===style ? " selected":"");
-    var optEl = el("div",{class:cls,onclick:function(){
+    var optEl = el("div",{class:cls,onclick:function(e){
       state.answers[state.qIndex] = style;
+      celebrateBurst(e.currentTarget);
       render();
     }},[
       el("div",{class:"icon"},[txt(STYLE_ICON[style])]),
@@ -1005,6 +1115,11 @@ function renderResultScreen(root){
 
   var btnRow = el("div",{class:"btn-row"});
   btnRow.appendChild(el("button",{class:"btn btn-ghost",onclick:goHome},[txt(state.studentLoggedIn ? "\uD83D\uDD13 Log out" : "\u2190 Back to start")]));
+  if(state.studentLoggedIn){
+    btnRow.appendChild(el("button",{class:"btn btn-primary",onclick:function(){
+      state.screen="studentHome"; render();
+    }},[txt("Go to my dashboard \u2192")]));
+  }
   card.appendChild(btnRow);
   root.appendChild(card);
 }
@@ -1178,10 +1293,25 @@ function renderClassDash(root){
   var card = el("div",{class:"card"});
   card.appendChild(el("div",{class:"back-link",onclick:function(){ state.screen="teacherHome"; render(); }},[txt("\u2190 Dashboard")]));
   card.appendChild(el("div",{class:"forgot-link",style:"float:right;margin-top:-2px;",onclick:function(){ refreshRoster("classDash"); }},[txt("\uD83D\uDD04 Refresh")]));
-  var roster = gradeRoster();
-  var sections = roster.filter(function(s,i){ return roster.map(function(r){return r.section;}).indexOf(s.section) === i; }).map(function(s){ return s.section; });
+  var fullRoster = gradeRoster();
+  var sections = fullRoster.map(function(s){return s.section;}).filter(function(s,i,arr){ return s && arr.indexOf(s) === i; });
+
+  if(sections.length > 1 && state.classDashSection && sections.indexOf(state.classDashSection) === -1){
+    state.classDashSection = null;
+  }
+  var roster = state.classDashSection ? fullRoster.filter(function(s){ return s.section === state.classDashSection; }) : fullRoster;
+
   card.appendChild(el("h2",{},[txt(state.teacherGrade+" VARK distribution")]));
-  card.appendChild(el("p",{},[txt(roster.length+" students \u00B7 "+state.teacherSchool+" \u00B7 "+state.teacherGrade+" \u00B7 "+sections.join(", "))]));
+  card.appendChild(el("p",{},[txt(roster.length+" students \u00B7 "+state.teacherSchool+" \u00B7 "+state.teacherGrade+(sections.length ? " \u00B7 "+sections.join(", ") : ""))]));
+
+  if(sections.length > 1){
+    var tabs = el("div",{class:"section-tabs"});
+    tabs.appendChild(el("div",{class:"section-tab"+(!state.classDashSection?" active":""),onclick:function(){ state.classDashSection=null; render(); }},[txt("All sections")]));
+    sections.forEach(function(sec){
+      tabs.appendChild(el("div",{class:"section-tab"+(state.classDashSection===sec?" active":""),onclick:function(){ state.classDashSection=sec; render(); }},[txt(sec)]));
+    });
+    card.appendChild(tabs);
+  }
 
   var dist = classDistribution(roster);
   var bars = el("div",{class:"bar-list class-chart"});
@@ -1213,17 +1343,40 @@ function renderClassDash(root){
 
   card.appendChild(el("h3",{style:"margin-top:26px;font-size:14px;color:var(--ink-soft);"},[txt("Roster")]));
   var rosterList = el("div",{class:"roster"});
-  roster.forEach(function(s){
-    rosterList.appendChild(el("div",{class:"roster-row",onclick:function(){ state.selectedStudent=s; state.screen="studentProfile"; render(); }},[
-      el("div",{},[
-        el("div",{class:"roster-name"},[txt(s.name), s.isNew ? el("span",{class:"new-tag"},[txt("NEW")]) : null]),
-        el("div",{class:"roster-meta"},[txt(s.grade+" \u2014 "+s.section+(s.school?" \u00B7 "+s.school:""))])
-      ]),
-      el("div",{class:"mini-badge "+s.style},[txt(STYLE_NAMES[s.style])])
-    ]));
-  });
+
+  if(!state.classDashSection && sections.length > 1){
+    /* No single section chosen: group the roster visually by section
+       instead of one flat mixed list, so two sections stay distinguishable. */
+    var groups = {};
+    var noSectionGroup = [];
+    roster.forEach(function(s){
+      if(s.section){ (groups[s.section] = groups[s.section] || []).push(s); }
+      else { noSectionGroup.push(s); }
+    });
+    sections.forEach(function(sec){
+      if(!groups[sec] || !groups[sec].length) return;
+      rosterList.appendChild(el("div",{class:"section-group-title"},[txt(sec+" ("+groups[sec].length+")")]));
+      groups[sec].forEach(function(s){ rosterList.appendChild(rosterRow(s)); });
+    });
+    if(noSectionGroup.length){
+      rosterList.appendChild(el("div",{class:"section-group-title"},[txt("No section ("+noSectionGroup.length+")")]));
+      noSectionGroup.forEach(function(s){ rosterList.appendChild(rosterRow(s)); });
+    }
+  } else {
+    roster.forEach(function(s){ rosterList.appendChild(rosterRow(s)); });
+  }
   card.appendChild(rosterList);
   root.appendChild(card);
+}
+
+function rosterRow(s){
+  return el("div",{class:"roster-row",onclick:function(){ state.selectedStudent=s; state.screen="studentProfile"; render(); }},[
+    el("div",{},[
+      el("div",{class:"roster-name"},[txt(s.name), s.isNew ? el("span",{class:"new-tag"},[txt("NEW")]) : null]),
+      el("div",{class:"roster-meta"},[txt(gradeSectionLine(s))])
+    ]),
+    el("div",{class:"mini-badge "+s.style},[txt(STYLE_NAMES[s.style])])
+  ]);
 }
 
 /* ---- teacher: student picker ---- */
@@ -1235,16 +1388,28 @@ function renderStudentPicker(root){
   card.appendChild(el("h2",{},[txt("Select a "+state.teacherGrade+" student")]));
   card.appendChild(el("p",{},[txt("Pick a name to view their predicted learning style and recommendations.")]));
   var gRoster = gradeRoster();
+  var gSections = gRoster.map(function(s){return s.section;}).filter(function(s,i,arr){ return s && arr.indexOf(s) === i; });
   var rosterList = el("div",{class:"roster",style:"margin-top:18px;"});
-  gRoster.forEach(function(s){
-    rosterList.appendChild(el("div",{class:"roster-row",onclick:function(){ state.selectedStudent=s; state.screen="studentProfile"; render(); }},[
-      el("div",{},[
-        el("div",{class:"roster-name"},[txt(s.name), s.isNew ? el("span",{class:"new-tag"},[txt("NEW")]) : null]),
-        el("div",{class:"roster-meta"},[txt(s.grade+" \u2014 "+s.section+(s.school?" \u00B7 "+s.school:""))])
-      ]),
-      el("div",{class:"mini-badge "+s.style},[txt(STYLE_NAMES[s.style])])
-    ]));
-  });
+
+  if(gSections.length > 1){
+    var groups = {};
+    var noSectionGroup = [];
+    gRoster.forEach(function(s){
+      if(s.section){ (groups[s.section] = groups[s.section] || []).push(s); }
+      else { noSectionGroup.push(s); }
+    });
+    gSections.forEach(function(sec){
+      if(!groups[sec] || !groups[sec].length) return;
+      rosterList.appendChild(el("div",{class:"section-group-title"},[txt(sec+" ("+groups[sec].length+")")]));
+      groups[sec].forEach(function(s){ rosterList.appendChild(rosterRow(s)); });
+    });
+    if(noSectionGroup.length){
+      rosterList.appendChild(el("div",{class:"section-group-title"},[txt("No section ("+noSectionGroup.length+")")]));
+      noSectionGroup.forEach(function(s){ rosterList.appendChild(rosterRow(s)); });
+    }
+  } else {
+    gRoster.forEach(function(s){ rosterList.appendChild(rosterRow(s)); });
+  }
   card.appendChild(rosterList);
   root.appendChild(card);
 }
@@ -1258,7 +1423,7 @@ function renderStudentProfile(root){
   card.appendChild(el("div",{class:"profile-head"},[
     el("div",{},[
       el("h2",{},[txt(s.name)]),
-      el("div",{class:"profile-meta"},[txt(s.grade+" \u2014 "+s.section+(s.school?" \u00B7 "+s.school:""))])
+      el("div",{class:"profile-meta"},[txt(gradeSectionLine(s))])
     ]),
     el("div",{class:"style-badge "+s.style},[txt(STYLE_ICON[s.style]+" "+STYLE_NAMES[s.style]+" learner")])
   ]));
@@ -1277,6 +1442,50 @@ function renderStudentProfile(root){
   root.appendChild(card);
 }
 
+/* Decorative floating shapes in the background — purely visual, fills
+   the empty side margins on wide screens with a gentle kid-friendly float.
+   Appended once, outside #app, so re-renders never disturb it. */
+function setupBackgroundDecor(){
+  var wrap = el("div",{class:"bg-decor"});
+  var shapes = ["\u2601\uFE0F","\u2B50","\u2728","\uD83C\uDF08","\uD83C\uDF1F","\uD83C\uDF88","\uD83E\uDD8B","\uD83C\uDF3C","\uD83E\uDE81","\u2600\uFE0F","\u2601\uFE0F","\u2B50"];
+  var positions = [
+    {top:"5%",left:"3%",size:"40px"},{top:"14%",left:"93%",size:"46px"},{top:"34%",left:"5%",size:"32px"},
+    {top:"50%",left:"91%",size:"40px"},{top:"68%",left:"3%",size:"44px"},{top:"84%",left:"94%",size:"36px"},
+    {top:"26%",left:"48%",size:"26px"},{top:"96%",left:"46%",size:"38px"},
+    {top:"8%",left:"46%",size:"30px"},{top:"60%",left:"50%",size:"24px"},
+    {top:"42%",left:"96%",size:"34px"},{top:"78%",left:"48%",size:"28px"}
+  ];
+  positions.forEach(function(pos, i){
+    wrap.appendChild(el("div",{class:"bg-shape",style:"top:"+pos.top+";left:"+pos.left+";font-size:"+pos.size+";animation-delay:"+(i*0.55)+"s;animation-duration:"+(8+i%4)+"s;"},[txt(shapes[i % shapes.length])]));
+  });
+  document.body.appendChild(wrap);
+}
+
+/* Small celebration burst of stars/sparkles near a clicked element —
+   used to make picking a quiz answer feel like a tiny win, not just a
+   static state change. */
+function celebrateBurst(originEl){
+  var rect = originEl.getBoundingClientRect();
+  var layer = document.createElement("div");
+  layer.style.position = "fixed";
+  layer.style.left = "0"; layer.style.top = "0"; layer.style.pointerEvents = "none"; layer.style.zIndex = "999";
+  var bits = ["\u2728","\u2B50","\uD83C\uDF1F","\uD83D\uDC96"];
+  for(var i=0;i<6;i++){
+    var b = document.createElement("span");
+    b.textContent = bits[i % bits.length];
+    b.style.position = "absolute";
+    b.style.top = (rect.top + rect.height/2) + "px";
+    b.style.fontSize = "18px";
+    b.style.transform = "translate(-50%,-50%)";
+    b.style.animation = "confettiFall "+(0.7+Math.random()*0.4)+"s ease-out forwards";
+    b.style.left = (rect.left + rect.width/2 + (Math.random()-0.5)*70) + "px";
+    layer.appendChild(b);
+  }
+  document.body.appendChild(layer);
+  setTimeout(function(){ layer.remove(); }, 1200);
+}
+
+setupBackgroundDecor();
 render();
 </script>
 </body>

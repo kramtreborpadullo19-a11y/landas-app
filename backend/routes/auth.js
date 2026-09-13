@@ -44,12 +44,16 @@ router.post('/signup/teacher', async (req, res) => {
   }
 });
 
-/* ---- student signup ---- */
+/* ---- student signup ----
+   Section is optional: some grades (e.g. small schools, Kinder) may not
+   split students into sections, so we accept a blank/omitted section
+   instead of requiring one. */
 router.post('/signup/student', async (req, res) => {
   const { name, email, password, school, age, grade, section } = req.body;
-  if (!name || !email || !password || !school || !age || !grade || !section) {
+  if (!name || !email || !password || !school || !age || !grade) {
     return res.status(400).json({ error: 'Please fill in every field.' });
   }
+  const sectionValue = section && section.trim() ? section.trim() : null;
   try {
     const hash = await bcrypt.hash(password, 10);
     const result = await pool.query(
@@ -61,11 +65,11 @@ router.post('/signup/student', async (req, res) => {
        insert into students (id, name, age, school, grade, section)
        select id, $3, $4, $5, $6, $7 from new_user
        returning id`,
-      [email.toLowerCase(), hash, name, age, school, grade, section]
+      [email.toLowerCase(), hash, name, age, school, grade, sectionValue]
     );
     const id = result.rows[0].id;
     const token = signToken({ id, role: 'student' });
-    res.json({ token, profile: { id, name, age, school, grade, section, style: null } });
+    res.json({ token, profile: { id, name, age, school, grade, section: sectionValue, style: null } });
   } catch (err) {
     if (err.code === '23505') return res.status(409).json({ error: 'An account with that email already exists.' });
     console.error(err);

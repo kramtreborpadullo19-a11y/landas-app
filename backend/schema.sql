@@ -26,7 +26,7 @@ create table if not exists students (
   age int not null,
   school text not null,
   grade text not null,
-  section text not null,
+  section text,
   style text check (style in ('V','A','R','K')),
   confidence int,
   completed_at timestamptz
